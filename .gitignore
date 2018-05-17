@@ -5,7 +5,7 @@
 *.slo
 *.lo
 *.o
-*.obj
+#*.obj
 
 # Precompiled Headers
 *.gch
@@ -30,3 +30,10 @@
 *.exe
 *.out
 *.app
+
+# Debugging information is temporary
+Debug
+
+# Should include all precompiled static stuff in the libraries directory since
+# these are dependencies.
+!/game/libraries/**/*
