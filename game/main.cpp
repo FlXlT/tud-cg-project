@@ -356,14 +356,17 @@ int main() {
 	secondCamera.forward = -secondCamera.position;
 	cameras.push_back(secondCamera);
 
-	// Assign the first camera as the main viewport.
-	// The other cameras are mainly for shadow mapping.
+	// Assign the first camera as the main viewport
+	// The other cameras are mainly for shadow mapping
 	mainCamera = firstCamera;
 
 	// Main loop
 	while (!glfwWindowShouldClose(window)) {
 
 		glfwPollEvents();
+
+		// Model/view/projection matrix from the point of view of the shadowCamera
+		glm::mat4 lightMVP = secondCamera.vpMatrix();
 
 		////////// Stub code for you to fill in order to render the shadow map
 		{
@@ -384,8 +387,15 @@ int main() {
 			// Execute draw command
 			glDrawArrays(GL_TRIANGLES, 0, vertices.size());
 
+			//// Set uniforms in fragment shader
+			// Set projection matrix
+			glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP));
 
-			// .... HERE YOU MUST ADD THE CORRECT UNIFORMS FOR RENDERING THE SHADOW MAP
+			// Set view position
+			glUniform3fv(glGetUniformLocation(shadowProgram, "viewPos"), 1, glm::value_ptr(secondCamera.position));
+
+			// Expose current time in shader uniform
+			glUniform1f(glGetUniformLocation(shadowProgram, "time"), static_cast<float>(glfwGetTime()));
 
 			// Bind vertex data
 			glBindVertexArray(vao);
@@ -411,6 +421,9 @@ int main() {
 
 		// Expose current time in shader uniform
 		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime()));
+
+		// Set MVP from the perspective of the shadow camera
+		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "lightMVP"), 1, GL_FALSE, glm::value_ptr(lightMVP));
 
 		// Bind vertex data
 		glBindVertexArray(vao);

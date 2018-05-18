@@ -20,6 +20,29 @@ void main() {
 	// Output the normal as color
 	const vec3 lightDir = normalize(lightPos - fragPos);
 
-    outColor = vec4(vec3(max(dot(fragNormal, lightDir), 0.0)), 1.0);
+	vec4 fragLightCoord = lightMVP * vec4(fragPos, 1.0);
+
+	fragLightCoord.xyz /= fragLightCoord.w;
+
+	// The resulting value is in NDC space (-1 to 1),
+	// we transform them to texture space (0 to 1)
+	fragLightCoord.xyz = fragLightCoord.xyz * 0.5 + 0.5;
+
+	// Depth of the fragment with respect to the light
+	float fragLightDepth = fragLightCoord.z;
+
+	// Shadow map coordinate corresponding to this fragment
+	vec2 shadowMapCoord = fragLightCoord.xy;
+
+	// Shadow map value from the corresponding shadow map position
+	float shadowMapDepth = texture(texShadow, shadowMapCoord).x;
+
+	float visibility = 1.0;
+
+	if ( shadowMapDepth + 0.00001 < fragLightDepth ) {
+		visibility = 0;
+	}
+
+	outColor = visibility * vec4(vec3( max(dot(fragNormal, lightDir), 0.0)), 1.0);
 
 }
