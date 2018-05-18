@@ -37,8 +37,10 @@ void main() {
 	// Shadow map value from the corresponding shadow map position
 	float shadowMapDepth = texture(texShadow, shadowMapCoord).x;
 
+	// The visibility factor, if it is 0 then a shadow was found
 	float visibility = 1.0;
 
+	// The shadow test, a small bias is added to avoid self-shadowing
 	if ( shadowMapDepth + 0.00001 < fragLightDepth ) {
 		visibility = 0;
 	}
