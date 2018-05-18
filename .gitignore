@@ -37,3 +37,6 @@ Debug
 # Should include all precompiled static stuff in the libraries directory since
 # these are dependencies.
 !/game/libraries/**/*
+
+# Not sure if this is usefull
+.vs/*
