@@ -31,6 +31,11 @@
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
+// Setup a set of cameras
+std::vector<Camera> cameras;
+// Initialize mainCamera which is visible for the user.
+Camera mainCamera;
+
 // Per-vertex data
 struct Vertex {
 	glm::vec3 pos;
@@ -105,8 +110,10 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 	switch (key) 
 	{
 	case GLFW_KEY_1:
+		mainCamera = cameras[0];
 		break;
 	case GLFW_KEY_2:
+		mainCamera = cameras[1];
 		break;
 	default:
 		break;
@@ -336,10 +343,22 @@ int main() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	/////////////////// Create main camera
-	Camera mainCamera;
-	mainCamera.aspect = WIDTH / (float)HEIGHT;
-	mainCamera.position = glm::vec3(1.2f, 1.1f, 0.9f);
-	mainCamera.forward  = -mainCamera.position;
+	Camera firstCamera;
+	firstCamera.aspect = WIDTH / (float)HEIGHT;
+	firstCamera.position = glm::vec3(1.2f, 1.1f, 0.9f);
+	firstCamera.forward = -firstCamera.position;
+	cameras.push_back(firstCamera);
+
+	/////////////////// Create second camera for shadow mapping
+	Camera secondCamera;
+	secondCamera.aspect = WIDTH / (float)HEIGHT;
+	secondCamera.position = glm::vec3(3.0f, 3.0f, 3.0f);
+	secondCamera.forward = -secondCamera.position;
+	cameras.push_back(secondCamera);
+
+	// Assign the first camera as the main viewport.
+	// The other cameras are mainly for shadow mapping.
+	mainCamera = firstCamera;
 
 	// Main loop
 	while (!glfwWindowShouldClose(window)) {
