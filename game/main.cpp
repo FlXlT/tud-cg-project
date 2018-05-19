@@ -260,6 +260,11 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
+	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, "spaceShip.obj")) {
+		std::cerr << err << std::endl;
+		return EXIT_FAILURE;
+	}
+
 	std::vector<Vertex> vertices;
 
 	// Read triangle vertices from OBJ file
