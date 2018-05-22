@@ -113,6 +113,28 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 	}
 }
 
+// MESHES
+
+struct Spaceship {
+	glm::vec3 pos;
+	glm::vec3 move;
+	float width;
+	float rot;
+
+	bool alive;
+};
+
+struct Weapon {
+	glm::vec3 pos;
+	glm::vec3 mouse;
+
+	float angle;
+	//struct Material mat;
+};	
+
+Spaceship spaceship;
+Weapon weapon;
+
 // Mouse button handle function
 void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 {
@@ -123,6 +145,18 @@ void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
 	camCursorPosHandler(xpos, ypos);
 }
+
+//void drawSpaceship(){
+//	if (spaceship.alive) {
+//		
+//	}
+//}
+//
+//void drawWeapon() {
+//	if (spaceship.alive) {
+//
+//	}
+//}
 
 
 int main() {
@@ -229,7 +263,6 @@ int main() {
 		}
 	}
 
-	//////////////////// Load a texture for exercise 5
 	// Create Texture
 	int texwidth, texheight, texchannels;
 	stbi_uc* pixels = stbi_load("smiley.png", &texwidth, &texheight, &texchannels, 3);
@@ -250,6 +283,7 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	////////////////////////// Load vertices of model
+	//// SPACESHIP MODEL LOAD
 	tinyobj::attrib_t attrib1;
 	std::vector<tinyobj::shape_t> shapes1;
 	std::vector<tinyobj::material_t> materials1;
@@ -286,6 +320,8 @@ int main() {
 		}
 	}
 
+
+	//// WEAPON MODEL LOAD
 	tinyobj::attrib_t attrib2;
 	std::vector<tinyobj::shape_t> shapes2;
 	std::vector<tinyobj::material_t> materials2;
@@ -296,7 +332,7 @@ int main() {
 		return EXIT_FAILURE;
 	}
 
-	//std::vector<vertex> vertices2;
+	std::vector<Vertex> vertices2;
 
 	// read triangle vertices from obj file
 	for (const auto& shape : shapes2) {
@@ -317,31 +353,34 @@ int main() {
 				attrib2.normals[3 * index.normal_index + 2]
 			};
 
-			vertices.push_back(vertex);
+			vertices2.push_back(vertex);
 		}
 	}
 
-	//////////////////// Create Vertex Buffer Object
-	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//////////////////// Create Vertex Buffer Objects
+	GLuint vao[2], vbo[2];
+	glGenVertexArrays(2, vao); // Bind vertex data to shader inputs using their index (location)
+	glGenBuffers(2, vbo);
+
+	////// SPACESHIP
+	glBindVertexArray(vao[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
-
-	// Bind vertex data to shader inputs using their index (location)
-	// These bindings are stored in the Vertex Array Object
-	GLuint vao;
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-
-	// The position vectors should be retrieved from the specified Vertex Buffer Object with given offset and stride
-	// Stride is the distance in bytes between vertices
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]); // position vectors
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
 	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]); // normal vectors
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
+	glEnableVertexAttribArray(1);
 
-	// The normals should be retrieved from the same Vertex Buffer Object (glBindBuffer is optional)
-	// The offset is different and the data should go to input 1 instead of 0
-	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	//////// WEAPON
+	glBindVertexArray(vao[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+	glBufferData(GL_ARRAY_BUFFER, vertices2.size() * sizeof(Vertex), vertices2.data(), GL_DYNAMIC_DRAW);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]); // The position vectors
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
+	glEnableVertexAttribArray(0);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]); // The normal vectors
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
 	glEnableVertexAttribArray(1);
 
@@ -376,13 +415,11 @@ int main() {
 	mainCamera.aspect = WIDTH / (float)HEIGHT;
 	mainCamera.position = glm::vec3(1.2f, 5.0f, 0.9f);
 	mainCamera.forward  = -mainCamera.position;
-
-	// Main loop
+	
+	//
+	// Main game loop
 	while (!glfwWindowShouldClose(window)) {
-
 		glfwPollEvents();
-
-		////////// Stub code for you to fill in order to render the shadow map
 		{
 			// Bind the off-screen framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
@@ -399,15 +436,14 @@ int main() {
 			glViewport(0, 0, SHADOWTEX_WIDTH, SHADOWTEX_HEIGHT);
 
 			// Execute draw command
-			glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+			/*glDrawArrays(GL_TRIANGLES, 0, vertices.size());*/
 
 			// .... HERE YOU MUST ADD THE CORRECT UNIFORMS FOR RENDERING THE SHADOW MAP
 
-			// Bind vertex data
-			glBindVertexArray(vao);
-
-			// Execute draw command
-			glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+			glBindVertexArray(vao[0]); // Bind vertex data
+			glDrawArrays(GL_TRIANGLES, 0, vertices.size()); // Execute draw command
+			glBindVertexArray(vao[1]); // Bind vertex data
+			glDrawArrays(GL_TRIANGLES, 0, vertices2.size()); // Execute draw command
 
 			// Unbind the off-screen framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -428,9 +464,8 @@ int main() {
 		// Expose current time in shader uniform
 		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime()));
 
-		// Bind vertex data
-		glBindVertexArray(vao);
-
+		
+		//..
 		// Bind the shadow map to texture slot 0
 		GLint texture_unit = 0;
 		glActiveTexture(GL_TEXTURE0 + texture_unit);
@@ -447,8 +482,13 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
-		// Execute draw command
+		// Bind vertex data
+		glBindVertexArray(vao[0]);
+		// Execute draw commands
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
+
+		glBindVertexArray(vao[1]);
+		glDrawArrays(GL_TRIANGLES, 0, vertices2.size());
 
 		// Present result to the screen
 		glfwSwapBuffers(window);
