@@ -19,7 +19,7 @@ struct Camera
 	float     aspect;
 
 	Camera::Camera()
-	: position(glm::vec3(0, 0, 0))
+	: position(glm::vec3(0, 10, 1))
 	, forward (glm::vec3(0, 0,-1))
 	, up      (glm::vec3(0, 1, 0)) 
 	, fov     (glm::pi<float>() / 4.f)

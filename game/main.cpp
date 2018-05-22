@@ -250,40 +250,71 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	////////////////////////// Load vertices of model
-	tinyobj::attrib_t attrib;
-	std::vector<tinyobj::shape_t> shapes;
-	std::vector<tinyobj::material_t> materials;
-	std::string err;
+	tinyobj::attrib_t attrib1;
+	std::vector<tinyobj::shape_t> shapes1;
+	std::vector<tinyobj::material_t> materials1;
+	std::string err1;
 
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, "scene.obj")) {
-		std::cerr << err << std::endl;
+	if (!tinyobj::LoadObj(&attrib1, &shapes1, &materials1, &err1, "spaceship.obj")) {
+		std::cerr << err1 << std::endl;
 		return EXIT_FAILURE;
 	}
 
-	if (!tinyobj::LoadObj(&attrib, &shapes, &materials, &err, "spaceShip.obj")) {
-		std::cerr << err << std::endl;
-		return EXIT_FAILURE;
-	}
-
+	//std::vector<Vertex> vertices1;
 	std::vector<Vertex> vertices;
 
 	// Read triangle vertices from OBJ file
-	for (const auto& shape : shapes) {
+	for (const auto& shape : shapes1) {
 		for (const auto& index : shape.mesh.indices) {
 			Vertex vertex = {};
 
 			// Retrieve coordinates for vertex by index
 			vertex.pos = {
-				attrib.vertices[3 * index.vertex_index + 0],
-				attrib.vertices[3 * index.vertex_index + 1],
-				attrib.vertices[3 * index.vertex_index + 2]
+				attrib1.vertices[3 * index.vertex_index + 0],
+				attrib1.vertices[3 * index.vertex_index + 1],
+				attrib1.vertices[3 * index.vertex_index + 2]
 			};
 
 			// Retrieve components of normal by index
 			vertex.normal = {
-				attrib.normals[3 * index.normal_index + 0],
-				attrib.normals[3 * index.normal_index + 1],
-				attrib.normals[3 * index.normal_index + 2]
+				attrib1.normals[3 * index.normal_index + 0],
+				attrib1.normals[3 * index.normal_index + 1],
+				attrib1.normals[3 * index.normal_index + 2]
+			};
+
+			vertices.push_back(vertex);
+		}
+	}
+
+	tinyobj::attrib_t attrib2;
+	std::vector<tinyobj::shape_t> shapes2;
+	std::vector<tinyobj::material_t> materials2;
+	std::string err2;
+
+	if (!tinyobj::LoadObj(&attrib2, &shapes2, &materials2, &err2, "weapons.obj")) {
+		std::cerr << err2 << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	//std::vector<vertex> vertices2;
+
+	// read triangle vertices from obj file
+	for (const auto& shape : shapes2) {
+		for (const auto& index : shape.mesh.indices) {
+			Vertex vertex = {};
+
+			// retrieve coordinates for vertex by index
+			vertex.pos = {
+				attrib2.vertices[3 * index.vertex_index + 0],
+				attrib2.vertices[3 * index.vertex_index + 1],
+				attrib2.vertices[3 * index.vertex_index + 2]
+			};
+
+			// retrieve components of normal by index
+			vertex.normal = {
+				attrib2.normals[3 * index.normal_index + 0],
+				attrib2.normals[3 * index.normal_index + 1],
+				attrib2.normals[3 * index.normal_index + 2]
 			};
 
 			vertices.push_back(vertex);
@@ -343,7 +374,7 @@ int main() {
 	/////////////////// Create main camera
 	Camera mainCamera;
 	mainCamera.aspect = WIDTH / (float)HEIGHT;
-	mainCamera.position = glm::vec3(1.2f, 1.1f, 0.9f);
+	mainCamera.position = glm::vec3(1.2f, 5.0f, 0.9f);
 	mainCamera.forward  = -mainCamera.position;
 
 	// Main loop
@@ -369,7 +400,6 @@ int main() {
 
 			// Execute draw command
 			glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-
 
 			// .... HERE YOU MUST ADD THE CORRECT UNIFORMS FOR RENDERING THE SHADOW MAP
 
