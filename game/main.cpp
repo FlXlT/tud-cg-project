@@ -418,6 +418,7 @@ int main() {
 
 		// Set view position
 		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera.position));
+		//printf("Camera pos: %f %f %f \n", mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
 
 		// Expose current time in shader uniform
 		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime()));

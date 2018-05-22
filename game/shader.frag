@@ -17,49 +17,77 @@ in vec3 fragNormal; // World-space normal
 
 void main() {
 
+	// Shadow Variables
+	bool inShadow = false;
 	float sum = 0.0;
 	float iterations = 0.0;	
-	float sampleArea = 0.01;
-	float sampleSize = 0.002;
-	float bias = 0.0000001;
+	float sampleArea = 0.001;
+	float sampleSize = 0.0002;
+	float bias = 0.001;
+	float visibility_factor = 0.2;
+
+	// Shading Variables
+	float shininess = 64;
+	
+	vec4 fragLightCoord = lightMVP * vec4(fragPos, 1.0);
+
+	fragLightCoord.xyz /= fragLightCoord.w;
+
+	// The resulting value is in NDC space (-1 to 1),
+	// we transform them to texture space (0 to 1)
+	fragLightCoord.xyz = fragLightCoord.xyz * 0.5 + 0.5;
+
+	// Depth of the fragment with respect to the light
+	float fragLightDepth = fragLightCoord.z;
+
+	// Shadow map coordinate corresponding to this fragment
+	vec2 shadowMapCoord = fragLightCoord.xy;
 
 	// Percentage Closer Filtering (PCF): averaging all neighbouring shadow test results.
 	for (float y = -sampleArea; y <= sampleArea; y += sampleSize){
 		for (float x = -sampleArea; x <= sampleArea; x += sampleSize){
 
-			// Testing neighbour pixel
-			const vec3 fragPosUnderTest = vec3(fragPos.x + x, fragPos.y + y, fragPos.z);
-
-			vec4 fragLightCoord = lightMVP * vec4(fragPosUnderTest, 1.0);
-
-			fragLightCoord.xyz /= fragLightCoord.w;
-
-			// The resulting value is in NDC space (-1 to 1),
-			// we transform them to texture space (0 to 1)
-			fragLightCoord.xyz = fragLightCoord.xyz * 0.5 + 0.5;
-
-			// Depth of the fragment with respect to the light
-			float fragLightDepth = fragLightCoord.z;
-
-			// Shadow map coordinate corresponding to this fragment
-			vec2 shadowMapCoord = fragLightCoord.xy;
+			vec2 shadowMapCoordUnderTest = vec2(shadowMapCoord.x + x, shadowMapCoord.y + y);
 
 			// Shadow map value from the corresponding shadow map position
-			float shadowMapDepth = texture(texShadow, shadowMapCoord).x;
+			float shadowMapDepth = texture(texShadow, shadowMapCoordUnderTest).x;
 
 			// The visibility factor, if it is 0 then a shadow was found
 			float visibility = 1.0;
 
 			// The shadow test, a small bias is added to avoid self-shadowing
 			if ( shadowMapDepth + bias < fragLightDepth ) {
-				visibility = 0.0;
+				visibility = visibility_factor;
+				inShadow = true;
 			}
 			sum += visibility;
 			iterations += 1.0;
 		}
 	}
 	
-	const vec3 lightDir = normalize(lightPos - fragPos);
+	//vec3 lightPosVariance = vec3(sin(time)*3, 3.0, cos(time)*3);
+	vec3 lightDir = normalize(lightPos - fragPos);
 
-	outColor = (sum / iterations) * vec4(vec3( max(dot(fragNormal, lightDir), 0.0)), 1.0);
+	// Diffuse shading
+	vec3 Kd = vec3(1.0, 1.0, 1.0);
+	const float diffuseFactor = dot(lightDir, fragNormal);
+	vec3 diffuse = Kd * diffuseFactor;
+	diffuse = clamp(diffuse, vec3(0, 0, 0), vec3(1.0, 1.0, 1.0));
+
+	// Specular shading
+	// Compute specular color component
+	vec3 specular;
+	
+	if(!inShadow){
+		vec3 L = lightDir - fragPos;
+		vec3 V = viewPos - fragPos;
+		vec3 H = (L + V) / length(L + V);
+		vec3 Ks = vec3(1.0, 1.0, 1.0);
+		float specularFactor = pow(dot(fragNormal, H), shininess);
+		specular = Ks * specularFactor;
+	} else {
+		specular = vec3(0,0,0);
+	}
+	
+	outColor =  (sum / iterations) * vec4(diffuse + specular, 1.0);
 }
