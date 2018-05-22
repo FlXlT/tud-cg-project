@@ -17,9 +17,49 @@ in vec3 fragNormal; // World-space normal
 
 void main() {
 
-	// Output the normal as color
+	float sum = 0.0;
+	float iterations = 0.0;	
+	float sampleArea = 0.01;
+	float sampleSize = 0.002;
+	float bias = 0.0000001;
+
+	// Percentage Closer Filtering (PCF): averaging all neighbouring shadow test results.
+	for (float y = -sampleArea; y <= sampleArea; y += sampleSize){
+		for (float x = -sampleArea; x <= sampleArea; x += sampleSize){
+
+			// Testing neighbour pixel
+			const vec3 fragPosUnderTest = vec3(fragPos.x + x, fragPos.y + y, fragPos.z);
+
+			vec4 fragLightCoord = lightMVP * vec4(fragPosUnderTest, 1.0);
+
+			fragLightCoord.xyz /= fragLightCoord.w;
+
+			// The resulting value is in NDC space (-1 to 1),
+			// we transform them to texture space (0 to 1)
+			fragLightCoord.xyz = fragLightCoord.xyz * 0.5 + 0.5;
+
+			// Depth of the fragment with respect to the light
+			float fragLightDepth = fragLightCoord.z;
+
+			// Shadow map coordinate corresponding to this fragment
+			vec2 shadowMapCoord = fragLightCoord.xy;
+
+			// Shadow map value from the corresponding shadow map position
+			float shadowMapDepth = texture(texShadow, shadowMapCoord).x;
+
+			// The visibility factor, if it is 0 then a shadow was found
+			float visibility = 1.0;
+
+			// The shadow test, a small bias is added to avoid self-shadowing
+			if ( shadowMapDepth + bias < fragLightDepth ) {
+				visibility = 0.0;
+			}
+			sum += visibility;
+			iterations += 1.0;
+		}
+	}
+	
 	const vec3 lightDir = normalize(lightPos - fragPos);
 
-    outColor = vec4(vec3(max(dot(fragNormal, lightDir), 0.0)), 1.0);
-
+	outColor = (sum / iterations) * vec4(vec3( max(dot(fragNormal, lightDir), 0.0)), 1.0);
 }
