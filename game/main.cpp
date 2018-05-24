@@ -27,9 +27,13 @@
 #include <sstream>
 #include <vector>
 
+#include <math.h>
+
 // Configuration
 const int WIDTH = 800;
 const int HEIGHT = 600;
+
+float weaponRot = 0.0;
 
 // Per-vertex data
 struct Vertex {
@@ -113,28 +117,6 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 	}
 }
 
-// MESHES
-
-struct Spaceship {
-	glm::vec3 pos;
-	glm::vec3 move;
-	float width;
-	float rot;
-
-	bool alive;
-};
-
-struct Weapon {
-	glm::vec3 pos;
-	glm::vec3 mouse;
-
-	float angle;
-	//struct Material mat;
-};	
-
-Spaceship spaceship;
-Weapon weapon;
-
 // Mouse button handle function
 void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 {
@@ -143,21 +125,9 @@ void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
-	camCursorPosHandler(xpos, ypos);
+	weaponRot = (float)atan(ypos / xpos);// ROTATION FOR THE WEAPONS (SHOULD INCORPORATE MORE RESTRICTIONS)
+	//camCursorPosHandler(xpos, ypos);
 }
-
-//void drawSpaceship(){
-//	if (spaceship.alive) {
-//		
-//	}
-//}
-//
-//void drawWeapon() {
-//	if (spaceship.alive) {
-//
-//	}
-//}
-
 
 int main() {
 	if (!glfwInit()) {
@@ -410,13 +380,12 @@ int main() {
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texShadow, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	/////////////////// Create main camera
+	/////////////////// Create main camera  // DEZE MOET NOG 180 GRADEN DRAAIEN XD
 	Camera mainCamera;
 	mainCamera.aspect = WIDTH / (float)HEIGHT;
-	mainCamera.position = glm::vec3(1.2f, 5.0f, 0.9f);
-	mainCamera.forward  = -mainCamera.position;
+	mainCamera.position = glm::vec3(0.0f, 3.0f, -0.5f);
+	mainCamera.forward  = glm::vec3(0.0f, -3.0f, 0.01f);
 	
-	//
 	// Main game loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -428,50 +397,43 @@ int main() {
 			glClearDepth(1.0f);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			glEnable(GL_DEPTH_TEST);
-
-			// Bind the shader
-			glUseProgram(shadowProgram);
-
-			// Set viewport size
-			glViewport(0, 0, SHADOWTEX_WIDTH, SHADOWTEX_HEIGHT);
+			
+			glUseProgram(shadowProgram); // Bind the shader
+			glViewport(0, 0, SHADOWTEX_WIDTH, SHADOWTEX_HEIGHT); // Set viewport size
 
 			// Execute draw command
 			/*glDrawArrays(GL_TRIANGLES, 0, vertices.size());*/
 
 			// .... HERE YOU MUST ADD THE CORRECT UNIFORMS FOR RENDERING THE SHADOW MAP
-
+			
 			glBindVertexArray(vao[0]); // Bind vertex data
 			glDrawArrays(GL_TRIANGLES, 0, vertices.size()); // Execute draw command
 			glBindVertexArray(vao[1]); // Bind vertex data
 			glDrawArrays(GL_TRIANGLES, 0, vertices2.size()); // Execute draw command
-
+	
 			// Unbind the off-screen framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
 		// Bind the shader
 		glUseProgram(mainProgram); 
-
 		updateCamera(mainCamera);
-
 		glm::mat4 mvp = mainCamera.vpMatrix();
 
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp));
+		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera.position)); // Set view 
+		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime())); // Expose current time in shader uniform
 
-		// Set view position
-		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera.position));
-
-		// Expose current time in shader uniform
-		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime()));
-
-		
 		//..
 		// Bind the shadow map to texture slot 0
-		GLint texture_unit = 0;
+		GLint texture_unit = 0; 
+		
 		glActiveTexture(GL_TEXTURE0 + texture_unit);
 		glBindTexture(GL_TEXTURE_2D, texShadow);
 		glUniform1i(glGetUniformLocation(mainProgram, "texShadow"), texture_unit);
 
+		GLint modelLoc = glGetUniformLocation(mainProgram, "model");
+		
 		// Set viewport size
 		glViewport(0, 0, WIDTH, HEIGHT);
 
@@ -482,12 +444,15 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
-		// Bind vertex data
-		glBindVertexArray(vao[0]);
-		// Execute draw commands
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());
-
+		glBindVertexArray(vao[0]); // Bind vertex data
+		glDrawArrays(GL_TRIANGLES, 0, vertices.size()); // Execute draw commands
 		glBindVertexArray(vao[1]);
+
+		// rotate the weapons real time
+		glm::mat4 model;
+		model = glm::rotate(model, weaponRot, glm::vec3(1.0f, 1.0f, 1.0f));
+		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
+
 		glDrawArrays(GL_TRIANGLES, 0, vertices2.size());
 
 		// Present result to the screen
@@ -495,12 +460,8 @@ int main() {
 	}
 
 	glDeleteFramebuffers(1, &framebuffer);
-
 	glDeleteTextures(1, &texShadow);
-
 	glfwDestroyWindow(window);
-	
 	glfwTerminate();
-
     return 0;
 }
