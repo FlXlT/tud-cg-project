@@ -34,6 +34,8 @@ const int WIDTH = 800;
 const int HEIGHT = 600;
 
 float weaponRot = 0.0;
+float weaponLeftRot = 0.0;
+float weaponRightRot = 0.0;
 
 // Per-vertex data
 struct Vertex {
@@ -126,6 +128,8 @@ void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
 	weaponRot = (float) atan((xpos - WIDTH/2) / (ypos - HEIGHT/2));
+	weaponLeftRot = (float)-1*atan((xpos - (WIDTH  / 2 + WIDTH * 0.075)) / (ypos - HEIGHT / 2));
+	weaponRightRot = (float)-1*atan((xpos - (WIDTH / 2 - WIDTH * 0.075)) / (ypos - HEIGHT / 2));
 	//camCursorPosHandler(xpos, ypos);
 }
 
@@ -509,35 +513,21 @@ int main() {
 		model = glm::rotate(model, rotation2, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-
-		
-
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size());		// Execute draw commands
-		
-		//glBindVertexArray(vao[1]);
-		//// rotate the weapons real time
-		//model = glm::translate(model, modelPositions[1]);
-		////float weaponrotation = weaponRot * atan(1) * 4 / 180;
-		//model = glm::rotate(model, weaponRot, glm::vec3(0.0f, 1.0f, 0.0f));
-		//glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-
-		//glDrawArrays(GL_TRIANGLES, 0, vertices2.size());
-
-		model = glm::mat4();
 
 		glBindVertexArray(vao[2]);
+		model = glm::mat4();
 		model = glm::translate(model, modelPositions[2]);
 		model = glm::rotate(model, rotation1, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, -1*weaponRot, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, weaponRightRot, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, vertices3.size());
 
 		model = glm::mat4();
-
 		model = glm::translate(model, modelPositions[3]);
 		model = glm::rotate(model, rotation1, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, -1*weaponRot, glm::vec3(0.0f, 1.0f, 0.0f));
+		model = glm::rotate(model, weaponLeftRot, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
 		glDrawArrays(GL_TRIANGLES, 0, vertices3.size());
