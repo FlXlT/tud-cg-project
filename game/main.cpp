@@ -327,6 +327,12 @@ int main() {
 		}
 	}
 
+	// World space positions of the models
+	glm::vec3 modelPositions[] = {
+		glm::vec3(0.0f, -0.5f, 0.0f),  // Spaceship location
+		glm::vec3(0.0f, 0.0f, 0.0f) //
+	};
+
 	//////////////////// Create Vertex Buffer Objects
 	GLuint vao[2], vbo[2];
 	glGenVertexArrays(2, vao); // Bind vertex data to shader inputs using their index (location)
@@ -383,8 +389,8 @@ int main() {
 	/////////////////// Create main camera  // DEZE MOET NOG 180 GRADEN DRAAIEN XD
 	Camera mainCamera;
 	mainCamera.aspect = WIDTH / (float)HEIGHT;
-	mainCamera.position = glm::vec3(0.0f, 3.0f, -0.5f);
-	mainCamera.forward  = glm::vec3(0.0f, -3.0f, 0.01f);
+	mainCamera.position = glm::vec3(0.0f, 0.0f, 3.0f);
+	mainCamera.forward  = glm::vec3(0.0f, 0.0f, 0.0f);
 	
 	// Main game loop
 	while (!glfwWindowShouldClose(window)) {
@@ -445,12 +451,23 @@ int main() {
 		glEnable(GL_DEPTH_TEST);
 
 		glBindVertexArray(vao[0]); // Bind vertex data
+								   // rotate the weapons real time
+		glm::mat4 model;
+		model = glm::translate(model, modelPositions[0]);
+		float rotation1 = -90 * atan(1) * 4 / 180;
+		float rotation2 = 180 * atan(1) * 4 / 180;
+		model = glm::rotate(model, rotation1, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, rotation2, glm::vec3(0.0f, 1.0f, 0.0f));
+		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
+
+
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size()); // Execute draw commands
 		glBindVertexArray(vao[1]);
 
 		// rotate the weapons real time
-		glm::mat4 model;
-		model = glm::rotate(model, weaponRot, glm::vec3(1.0f, 1.0f, 1.0f));
+		model = glm::translate(model, modelPositions[1]);
+		float weaponrotation = weaponRot * atan(1) * 4 / 180;
+		model = glm::rotate(model, weaponrotation, glm::vec3(1.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glDrawArrays(GL_TRIANGLES, 0, vertices2.size());
