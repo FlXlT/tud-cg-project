@@ -125,7 +125,7 @@ void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
-	weaponRot = (float)atan(ypos / xpos);// ROTATION FOR THE WEAPONS (SHOULD INCORPORATE MORE RESTRICTIONS)
+	weaponRot = (float) atan((xpos - WIDTH/2) / (ypos - HEIGHT/2));
 	//camCursorPosHandler(xpos, ypos);
 }
 
@@ -451,8 +451,8 @@ int main() {
 		glEnable(GL_DEPTH_TEST);
 
 		glBindVertexArray(vao[0]); // Bind vertex data
-								   // rotate the weapons real time
-		glm::mat4 model;
+								   
+		glm::mat4 model; // location of the model to place
 		model = glm::translate(model, modelPositions[0]);
 		float rotation1 = -90 * atan(1) * 4 / 180;
 		float rotation2 = 180 * atan(1) * 4 / 180;
@@ -460,14 +460,13 @@ int main() {
 		model = glm::rotate(model, rotation2, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
 
-
 		glDrawArrays(GL_TRIANGLES, 0, vertices.size()); // Execute draw commands
 		glBindVertexArray(vao[1]);
 
 		// rotate the weapons real time
 		model = glm::translate(model, modelPositions[1]);
-		float weaponrotation = weaponRot * atan(1) * 4 / 180;
-		model = glm::rotate(model, weaponrotation, glm::vec3(1.0f, 1.0f, 0.0f));
+		//float weaponrotation = weaponRot * atan(1) * 4 / 180;
+		model = glm::rotate(model, weaponRot, glm::vec3(0.0f, 1.0f, 0.0f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
 
 		glDrawArrays(GL_TRIANGLES, 0, vertices2.size());
