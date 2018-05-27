@@ -24,6 +24,9 @@ class Object {
 	// List of vertices that constitute the geometric representation of this object
 	std::vector<Vertex> vertices;
 
+	// The model matrix for this object
+	glm::mat4 model;
+
 	// Tiny OBJ Loader Related Attributes
 	tinyobj::attrib_t attrib;
 	std::vector<tinyobj::shape_t> shapes;
@@ -33,4 +36,22 @@ public:
 
 	void loadFromFile(const char* filename);
 	std::vector<Vertex>* getVertices();
+	glm::mat4* getModelMatrix();
+	void setModelMatrix(glm::mat4 matrix);
+	void clearModelMatrix();
+
+	void translate(glm::vec3 translation);
+	void translateX(float translation);
+	void translateY(float translation);
+	void translateZ(float translation);
+
+	void rotate(float angle, glm::vec3 axis);
+	void rotateX(float angle);
+	void rotateY(float angle);
+	void rotateZ(float angle);
+
+	void scale(glm::vec3 factors);
+	void scaleX(float factor);
+	void scaleY(float factor);
+	void scaleZ(float factor);
 };

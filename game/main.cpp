@@ -469,20 +469,25 @@ int main() {
 
 		glBindVertexArray(vao[0]); // Bind vertex data
 								   
-		glm::mat4 model; // location of the model to place
-		model = glm::translate(model, modelPositions[0]);
-		float rotation1 = -90 * atan(1) * 4 / 180;
-		float rotation2 = 180 * atan(1) * 4 / 180;
-		model = glm::rotate(model, rotation1, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, rotation2, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
+
+		float angleX = -90 * atan(1) * 4 / 180;
+		float angleY = 180 * atan(1) * 4 / 180;
+
+		spaceship.clearModelMatrix();
+		spaceship.translate(modelPositions[0]);
+		spaceship.rotateX(angleX);
+		spaceship.rotateY(angleY);
+		spaceship.scale(glm::vec3(0.5f, 0.5f, 0.5f));
+
+		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*spaceship.getModelMatrix()));
 		glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size());		// Execute draw commands
+
+		glm::mat4 model;
 
 		glBindVertexArray(vao[2]);
 		model = glm::mat4();
 		model = glm::translate(model, modelPositions[2]);
-		model = glm::rotate(model, rotation1, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, weaponRightRot, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
@@ -490,7 +495,7 @@ int main() {
 
 		model = glm::mat4();
 		model = glm::translate(model, modelPositions[3]);
-		model = glm::rotate(model, rotation1, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, weaponLeftRot, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
