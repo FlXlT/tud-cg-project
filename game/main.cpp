@@ -29,6 +29,9 @@
 
 #include <math.h>
 
+#include "vertex.h"
+#include "object.h"
+
 // Configuration
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -37,16 +40,15 @@ float weaponRot = 0.0;
 float weaponLeftRot = 0.0;
 float weaponRightRot = 0.0;
 
-// Per-vertex data
-struct Vertex {
-	glm::vec3 pos;
-	glm::vec3 normal;
-};
+// Setup a set of cameras
+std::vector<Camera> cameras;
+// Initialize mainCamera which is visible for the user.
+Camera mainCamera;
 
 // Helper function to read a file like a shader
 std::string readFile(const std::string& path) {
 	std::ifstream file(path, std::ios::binary);
-	
+
 	std::stringstream buffer;
 	buffer << file.rdbuf();
 
@@ -67,7 +69,7 @@ bool checkShaderErrors(GLuint shader) {
 		glGetShaderInfoLog(shader, logLength, nullptr, logBuffer.data());
 
 		std::cerr << logBuffer.data() << std::endl;
-		
+
 		return false;
 	} else {
 		return true;
@@ -88,7 +90,7 @@ bool checkProgramErrors(GLuint program) {
 		glGetProgramInfoLog(program, logLength, nullptr, logBuffer.data());
 
 		std::cerr << logBuffer.data() << std::endl;
-		
+
 		return false;
 	} else {
 		return true;
@@ -108,11 +110,13 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 {
 	cameraKeyboardHandler(key, action);
 
-	switch (key) 
+	switch (key)
 	{
 	case GLFW_KEY_1:
+		mainCamera = cameras[0];
 		break;
 	case GLFW_KEY_2:
+		mainCamera = cameras[1];
 		break;
 	default:
 		break;
@@ -240,7 +244,7 @@ int main() {
 	// Create Texture
 	int texwidth, texheight, texchannels;
 	stbi_uc* pixels = stbi_load("smiley.png", &texwidth, &texheight, &texchannels, 3);
-	
+
 	GLuint texLight;
 	glGenTextures(1, &texLight);
 	glBindTexture(GL_TEXTURE_2D, texLight);
@@ -257,115 +261,11 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	////////////////////////// Load vertices of model
-	//// SPACESHIP MODEL LOAD
-	tinyobj::attrib_t attrib1;
-	std::vector<tinyobj::shape_t> shapes1;
-	std::vector<tinyobj::material_t> materials1;
-	std::string err1;
 
-	if (!tinyobj::LoadObj(&attrib1, &shapes1, &materials1, &err1, "spaceship.obj")) {
-		std::cerr << err1 << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	//std::vector<Vertex> vertices1;
-	std::vector<Vertex> vertices;
-
-	// Read triangle vertices from OBJ file
-	for (const auto& shape : shapes1) {
-		for (const auto& index : shape.mesh.indices) {
-			Vertex vertex = {};
-
-			// Retrieve coordinates for vertex by index
-			vertex.pos = {
-				attrib1.vertices[3 * index.vertex_index + 0],
-				attrib1.vertices[3 * index.vertex_index + 1],
-				attrib1.vertices[3 * index.vertex_index + 2]
-			};
-
-			// Retrieve components of normal by index
-			vertex.normal = {
-				attrib1.normals[3 * index.normal_index + 0],
-				attrib1.normals[3 * index.normal_index + 1],
-				attrib1.normals[3 * index.normal_index + 2]
-			};
-
-			vertices.push_back(vertex);
-		}
-	}
-
-
-	//// WEAPON MODEL LOAD
-	tinyobj::attrib_t attrib2;
-	std::vector<tinyobj::shape_t> shapes2;
-	std::vector<tinyobj::material_t> materials2;
-	std::string err2;
-
-	if (!tinyobj::LoadObj(&attrib2, &shapes2, &materials2, &err2, "weapons.obj")) {
-		std::cerr << err2 << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	std::vector<Vertex> vertices2;
-
-	// read triangle vertices from obj file
-	for (const auto& shape : shapes2) {
-		for (const auto& index : shape.mesh.indices) {
-			Vertex vertex = {};
-
-			// retrieve coordinates for vertex by index
-			vertex.pos = {
-				attrib2.vertices[3 * index.vertex_index + 0],
-				attrib2.vertices[3 * index.vertex_index + 1],
-				attrib2.vertices[3 * index.vertex_index + 2]
-			};
-
-			// retrieve components of normal by index
-			vertex.normal = {
-				attrib2.normals[3 * index.normal_index + 0],
-				attrib2.normals[3 * index.normal_index + 1],
-				attrib2.normals[3 * index.normal_index + 2]
-			};
-
-			vertices2.push_back(vertex);
-		}
-	}
-
-	//// SINGLE WEAPON MODEL LOAD
-	tinyobj::attrib_t attrib3;
-	std::vector<tinyobj::shape_t> shapes3;
-	std::vector<tinyobj::material_t> materials3;
-	std::string err3;
-
-	if (!tinyobj::LoadObj(&attrib3, &shapes3, &materials3, &err3, "SingleWeapon.obj")) {
-		std::cerr << err3 << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	std::vector<Vertex> vertices3;
-
-	// read triangle vertices from obj file
-	for (const auto& shape : shapes3) {
-		for (const auto& index : shape.mesh.indices) {
-			Vertex vertex = {};
-
-			// retrieve coordinates for vertex by index
-			vertex.pos = {
-				attrib3.vertices[3 * index.vertex_index + 0],
-				attrib3.vertices[3 * index.vertex_index + 1],
-				attrib3.vertices[3 * index.vertex_index + 2]
-			};
-
-			// retrieve components of normal by index
-			vertex.normal = {
-				attrib3.normals[3 * index.normal_index + 0],
-				attrib3.normals[3 * index.normal_index + 1],
-				attrib3.normals[3 * index.normal_index + 2]
-			};
-
-			vertices3.push_back(vertex);
-		}
-	}
+	Object spaceship;
+	spaceship.loadFromFile("spaceship.obj");
+	Object singleWeapon;
+	singleWeapon.loadFromFile("SingleWeapon.obj");
 
 	// World space positions of the models
 	glm::vec3 modelPositions[] = {
@@ -383,7 +283,7 @@ int main() {
 	////// SPACESHIP
 	glBindVertexArray(vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (*spaceship.getVertices()).size() * sizeof(Vertex), (*spaceship.getVertices()).data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]); // position vectors
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
 	glEnableVertexAttribArray(0);
@@ -391,21 +291,10 @@ int main() {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
 	glEnableVertexAttribArray(1);
 
-	//////// WEAPON
-	glBindVertexArray(vao[1]);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, vertices2.size() * sizeof(Vertex), vertices2.data(), GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]); // The position vectors
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]); // The normal vectors
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
-	glEnableVertexAttribArray(1);
-
 	//////// SINGLE WEAPON
 	glBindVertexArray(vao[2]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, vertices3.size() * sizeof(Vertex), vertices3.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (*singleWeapon.getVertices()).size() * sizeof(Vertex), (*singleWeapon.getVertices()).data(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]); // The position vectors
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
 	glEnableVertexAttribArray(0);
@@ -439,24 +328,41 @@ int main() {
 	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, texShadow, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	/////////////////// Create main camera  // DEZE MOET NOG 180 GRADEN DRAAIEN XD
-	Camera mainCamera;
-	mainCamera.aspect = WIDTH / (float)HEIGHT;
+	/////////////////// Create main camera
+	Camera firstCamera;
+	firstCamera.aspect = WIDTH / (float)HEIGHT;
 	mainCamera.position = glm::vec3(0.0f, 0.0f, 3.0f);
 	mainCamera.forward  = glm::vec3(0.0f, 0.0f, 0.0f);
-	
-	// Main game loop
+	cameras.push_back(firstCamera);
+
+	/////////////////// Create second camera for shadow mapping
+	Camera secondCamera;
+	secondCamera.aspect = WIDTH / (float)HEIGHT;
+	mainCamera.position = glm::vec3(0.0f, 0.0f, 4.0f);
+	mainCamera.forward  = glm::vec3(0.0f, 0.0f, 0.0f);
+	cameras.push_back(secondCamera);
+
+	// Assign the first camera as the main viewport
+	// The other cameras are mainly for shadow mapping
+	mainCamera = firstCamera;
+
+	// Main loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
+
+		// Model/view/projection matrix from the point of view of the shadowCamera
+		glm::mat4 lightMVP = secondCamera.vpMatrix();
+
+		////////// Stub code for you to fill in order to render the shadow map
 		{
 			// Bind the off-screen framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, framebuffer);
-			
+
 			// Clear the shadow map and set needed options
 			glClearDepth(1.0f);
 			glClear(GL_DEPTH_BUFFER_BIT);
 			glEnable(GL_DEPTH_TEST);
-			
+
 			glUseProgram(shadowProgram); // Bind the shader
 			glViewport(0, 0, SHADOWTEX_WIDTH, SHADOWTEX_HEIGHT); // Set viewport size
 
@@ -464,73 +370,103 @@ int main() {
 			/*glDrawArrays(GL_TRIANGLES, 0, vertices.size());*/
 
 			// .... HERE YOU MUST ADD THE CORRECT UNIFORMS FOR RENDERING THE SHADOW MAP
-			
+
 			glBindVertexArray(vao[0]); // Bind vertex data
-			glDrawArrays(GL_TRIANGLES, 0, vertices.size()); // Execute draw command
-			glBindVertexArray(vao[1]); // Bind vertex data
-			glDrawArrays(GL_TRIANGLES, 0, vertices2.size()); // Execute draw command
-	
+			glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size()); // Execute draw command
+
+			//// Set uniforms in fragment shader
+			// Set projection matrix
+			glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP));
+
+			// Set view position
+			glUniform3fv(glGetUniformLocation(shadowProgram, "viewPos"), 1, glm::value_ptr(secondCamera.position));
+
+			// Expose current time in shader uniform
+			glUniform1f(glGetUniformLocation(shadowProgram, "time"), static_cast<float>(glfwGetTime()));
+
+			// Bind vertex data
+			glBindVertexArray(vao[0]);
+
+			// Execute draw command
+			glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size());
+
 			// Unbind the off-screen framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		}
 
 		// Bind the shader
-		glUseProgram(mainProgram); 
+		glUseProgram(mainProgram);
 		updateCamera(mainCamera);
 		glm::mat4 mvp = mainCamera.vpMatrix();
 
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp));
-		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera.position)); // Set view 
+		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera.position)); // Set view
 		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime())); // Expose current time in shader uniform
 
-		//..
+		// Set view position
+		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera.position));
+
+		// Expose current time in shader uniform
+		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime()));
+
+		// Set MVP from the perspective of the shadow camera
+		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "lightMVP"), 1, GL_FALSE, glm::value_ptr(lightMVP));
+
+		// Bind vertex data
+		//glBindVertexArray(vao);
+
 		// Bind the shadow map to texture slot 0
-		GLint texture_unit = 0; 
-		
+		GLint texture_unit = 0;
+
 		glActiveTexture(GL_TEXTURE0 + texture_unit);
 		glBindTexture(GL_TEXTURE_2D, texShadow);
 		glUniform1i(glGetUniformLocation(mainProgram, "texShadow"), texture_unit);
 
 		GLint modelLoc = glGetUniformLocation(mainProgram, "model");
-		
+
 		// Set viewport size
 		glViewport(0, 0, WIDTH, HEIGHT);
 
 		// Clear the framebuffer to black and depth to maximum value
-		glClearDepth(1.0f);  
-		glClearColor(0.1f, 0.2f, 0.3f, 1.0f); 
+		glClearDepth(1.0f);
+		glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
 		glBindVertexArray(vao[0]); // Bind vertex data
-								   
-		glm::mat4 model; // location of the model to place
-		model = glm::translate(model, modelPositions[0]);
-		float rotation1 = -90 * atan(1) * 4 / 180;
-		float rotation2 = 180 * atan(1) * 4 / 180;
-		model = glm::rotate(model, rotation1, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, rotation2, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
-		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());		// Execute draw commands
+
+
+		float angleX = -90 * atan(1) * 4 / 180;
+		float angleY = 180 * atan(1) * 4 / 180;
+
+		spaceship.clearModelMatrix();
+		spaceship.translate(modelPositions[0]);
+		spaceship.rotateX(angleX);
+		spaceship.rotateY(angleY);
+		spaceship.scale(glm::vec3(0.5f, 0.5f, 0.5f));
+
+		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*spaceship.getModelMatrix()));
+		glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size());		// Execute draw commands
+
+		glm::mat4 model;
 
 		glBindVertexArray(vao[2]);
 		model = glm::mat4();
 		model = glm::translate(model, modelPositions[2]);
-		model = glm::rotate(model, rotation1, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, weaponRightRot, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, vertices3.size());
+		glDrawArrays(GL_TRIANGLES, 0, (*singleWeapon.getVertices()).size());
 
 		model = glm::mat4();
 		model = glm::translate(model, modelPositions[3]);
-		model = glm::rotate(model, rotation1, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::rotate(model, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
 		model = glm::rotate(model, weaponLeftRot, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, vertices3.size());
+		glDrawArrays(GL_TRIANGLES, 0, (*singleWeapon.getVertices()).size());
 
 		// Present result to the screen
 		glfwSwapBuffers(window);

@@ -41,3 +41,5 @@ Debug
 # these are dependencies.
 !/game/libraries/**/*
 
+# Not sure if this is usefull
+.vs/*
