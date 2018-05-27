@@ -5,10 +5,16 @@
 #include "geometric_object.h"
 
 class Scene {
-	std::vector<GeometricObject> objects;
-
+	
+	
 public:
 
+	std::vector<GeometricObject*> objects;
+
+	GeometricObject spaceship;
+	GeometricObject weaponLeft;
+	GeometricObject weaponRight;
+
 	void build();
-	std::vector<GeometricObject>* getObjects();
+	void generateBufferObjects();
 };

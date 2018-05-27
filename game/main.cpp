@@ -266,73 +266,9 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
+	scene.generateBufferObjects();
 
-
-
-
-	////////////////////////// Load vertices of model
-
-	std::vector<GeometricObject*> objects;
-
-	float angleX = -90 * atan(1) * 4 / 180;
-	float angleY = 180 * atan(1) * 4 / 180;
-
-
-	GeometricObject spaceship;
-	spaceship.loadFromFile("spaceship.obj");
-
-	spaceship.translate(glm::vec3(0.0f, -0.5f, 0.0f));
-	spaceship.scale(glm::vec3(0.5f, 0.5f, 0.5f));
-	spaceship.rotateX(angleX);
-
-	spaceship.pushModelMatrix();
-
-	spaceship.rotateY(angleY);
-
-
-	objects.push_back(&spaceship);
-
-
-	GeometricObject weaponLeft;
-	weaponLeft.loadFromFile("SingleWeapon.obj");
-
-	weaponLeft.translate(glm::vec3(-0.125f, -0.42f, 0.0f));
-	weaponLeft.scale(glm::vec3(0.05f, 0.05f, 0.05f));
-	weaponLeft.rotateX(angleX);
-
-	weaponLeft.pushModelMatrix();
-
-	weaponLeft.rotateY(weaponLeftRot);
-
-
-	objects.push_back(&weaponLeft);
-
-
-	GeometricObject weaponRight;
-	weaponRight.loadFromFile("SingleWeapon.obj");
-
-	weaponRight.translate(glm::vec3(0.125f, -0.42f, 0.0f));
-	weaponRight.scale(glm::vec3(0.05f, 0.05f, 0.05f));
-	weaponRight.rotateX(angleX);
-
-	weaponRight.pushModelMatrix();
-
-	weaponRight.rotateY(weaponRightRot);
-
-
-	objects.push_back(&weaponRight);
-
-
-
-
-
-
-	//////////////////// Create Vertex Buffer Objects
-	for (int i = 0; i < objects.size(); i++) {
-		(*objects[i]).generateBufferObjects();
-	}
-
-
+	
 	//////////////////// Create Shadow Texture
 	GLuint texShadow;
 	const int SHADOWTEX_WIDTH  = 1024;
@@ -462,24 +398,19 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
-		weaponLeft.loadModelMatrix();
-		weaponLeft.rotateY(weaponLeftRot);
+		scene.weaponLeft.loadModelMatrix();
+		scene.weaponLeft.rotateY(weaponLeftRot);
 
-		weaponRight.loadModelMatrix();
-		weaponRight.rotateY(weaponRightRot);
+		scene.weaponRight.loadModelMatrix();
+		scene.weaponRight.rotateY(weaponRightRot);
 
-
-		glBindVertexArray((*objects[0]).vao);
-		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*spaceship.getModelMatrix()));
-		glDrawArrays(GL_TRIANGLES, 0, spaceship.size());		// Execute draw commands
-
-		glBindVertexArray((*objects[1]).vao);
-		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*weaponLeft.getModelMatrix()));
-		glDrawArrays(GL_TRIANGLES, 0, weaponLeft.size());
-
-		glBindVertexArray((*objects[2]).vao);
-		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*weaponRight.getModelMatrix()));
-		glDrawArrays(GL_TRIANGLES, 0, weaponRight.size());
+		// Render objects
+		for (int i = 0; i < scene.objects.size(); i++) {
+			GeometricObject obj = *scene.objects[i];
+			glBindVertexArray(obj.vao);
+			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
+			glDrawArrays(GL_TRIANGLES, 0, obj.size());
+		}
 
 		// Present result to the screen
 		glfwSwapBuffers(window);
