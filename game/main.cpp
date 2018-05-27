@@ -264,79 +264,8 @@ int main() {
 
 	Object spaceship;
 	spaceship.loadFromFile("spaceship.obj");
-
-
-	//// WEAPON MODEL LOAD
-	tinyobj::attrib_t attrib2;
-	std::vector<tinyobj::shape_t> shapes2;
-	std::vector<tinyobj::material_t> materials2;
-	std::string err2;
-
-	if (!tinyobj::LoadObj(&attrib2, &shapes2, &materials2, &err2, "weapons.obj")) {
-		std::cerr << err2 << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	std::vector<Vertex> vertices2;
-
-	// read triangle vertices from obj file
-	for (const auto& shape : shapes2) {
-		for (const auto& index : shape.mesh.indices) {
-			Vertex vertex = {};
-
-			// retrieve coordinates for vertex by index
-			vertex.pos = {
-				attrib2.vertices[3 * index.vertex_index + 0],
-				attrib2.vertices[3 * index.vertex_index + 1],
-				attrib2.vertices[3 * index.vertex_index + 2]
-			};
-
-			// retrieve components of normal by index
-			vertex.normal = {
-				attrib2.normals[3 * index.normal_index + 0],
-				attrib2.normals[3 * index.normal_index + 1],
-				attrib2.normals[3 * index.normal_index + 2]
-			};
-
-			vertices2.push_back(vertex);
-		}
-	}
-
-	//// SINGLE WEAPON MODEL LOAD
-	tinyobj::attrib_t attrib3;
-	std::vector<tinyobj::shape_t> shapes3;
-	std::vector<tinyobj::material_t> materials3;
-	std::string err3;
-
-	if (!tinyobj::LoadObj(&attrib3, &shapes3, &materials3, &err3, "SingleWeapon.obj")) {
-		std::cerr << err3 << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	std::vector<Vertex> vertices3;
-
-	// read triangle vertices from obj file
-	for (const auto& shape : shapes3) {
-		for (const auto& index : shape.mesh.indices) {
-			Vertex vertex = {};
-
-			// retrieve coordinates for vertex by index
-			vertex.pos = {
-				attrib3.vertices[3 * index.vertex_index + 0],
-				attrib3.vertices[3 * index.vertex_index + 1],
-				attrib3.vertices[3 * index.vertex_index + 2]
-			};
-
-			// retrieve components of normal by index
-			vertex.normal = {
-				attrib3.normals[3 * index.normal_index + 0],
-				attrib3.normals[3 * index.normal_index + 1],
-				attrib3.normals[3 * index.normal_index + 2]
-			};
-
-			vertices3.push_back(vertex);
-		}
-	}
+	Object singleWeapon;
+	singleWeapon.loadFromFile("SingleWeapon.obj");
 
 	// World space positions of the models
 	glm::vec3 modelPositions[] = {
@@ -362,21 +291,10 @@ int main() {
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
 	glEnableVertexAttribArray(1);
 
-	//////// WEAPON
-	glBindVertexArray(vao[1]);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
-	glBufferData(GL_ARRAY_BUFFER, vertices2.size() * sizeof(Vertex), vertices2.data(), GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]); // The position vectors
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[1]); // The normal vectors
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
-	glEnableVertexAttribArray(1);
-
 	//////// SINGLE WEAPON
 	glBindVertexArray(vao[2]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, vertices3.size() * sizeof(Vertex), vertices3.data(), GL_DYNAMIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (*singleWeapon.getVertices()).size() * sizeof(Vertex), (*singleWeapon.getVertices()).data(), GL_DYNAMIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]); // The position vectors
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
 	glEnableVertexAttribArray(0);
@@ -455,8 +373,6 @@ int main() {
 
 			glBindVertexArray(vao[0]); // Bind vertex data
 			glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size()); // Execute draw command
-			glBindVertexArray(vao[1]); // Bind vertex data
-			glDrawArrays(GL_TRIANGLES, 0, vertices2.size()); // Execute draw command
 
 			//// Set uniforms in fragment shader
 			// Set projection matrix
@@ -542,7 +458,7 @@ int main() {
 		model = glm::rotate(model, weaponRightRot, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, vertices3.size());
+		glDrawArrays(GL_TRIANGLES, 0, (*singleWeapon.getVertices()).size());
 
 		model = glm::mat4();
 		model = glm::translate(model, modelPositions[3]);
@@ -550,7 +466,7 @@ int main() {
 		model = glm::rotate(model, weaponLeftRot, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, vertices3.size());
+		glDrawArrays(GL_TRIANGLES, 0, (*singleWeapon.getVertices()).size());
 
 		// Present result to the screen
 		glfwSwapBuffers(window);
