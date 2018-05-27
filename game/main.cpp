@@ -29,6 +29,9 @@
 
 #include <math.h>
 
+#include "vertex.h"
+#include "object.h"
+
 // Configuration
 const int WIDTH = 800;
 const int HEIGHT = 600;
@@ -36,12 +39,6 @@ const int HEIGHT = 600;
 float weaponRot = 0.0;
 float weaponLeftRot = 0.0;
 float weaponRightRot = 0.0;
-
-// Per-vertex data
-struct Vertex {
-	glm::vec3 pos;
-	glm::vec3 normal;
-};
 
 // Helper function to read a file like a shader
 std::string readFile(const std::string& path) {
@@ -257,42 +254,9 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	////////////////////////// Load vertices of model
-	//// SPACESHIP MODEL LOAD
-	tinyobj::attrib_t attrib1;
-	std::vector<tinyobj::shape_t> shapes1;
-	std::vector<tinyobj::material_t> materials1;
-	std::string err1;
 
-	if (!tinyobj::LoadObj(&attrib1, &shapes1, &materials1, &err1, "spaceship.obj")) {
-		std::cerr << err1 << std::endl;
-		return EXIT_FAILURE;
-	}
-
-	//std::vector<Vertex> vertices1;
-	std::vector<Vertex> vertices;
-
-	// Read triangle vertices from OBJ file
-	for (const auto& shape : shapes1) {
-		for (const auto& index : shape.mesh.indices) {
-			Vertex vertex = {};
-
-			// Retrieve coordinates for vertex by index
-			vertex.pos = {
-				attrib1.vertices[3 * index.vertex_index + 0],
-				attrib1.vertices[3 * index.vertex_index + 1],
-				attrib1.vertices[3 * index.vertex_index + 2]
-			};
-
-			// Retrieve components of normal by index
-			vertex.normal = {
-				attrib1.normals[3 * index.normal_index + 0],
-				attrib1.normals[3 * index.normal_index + 1],
-				attrib1.normals[3 * index.normal_index + 2]
-			};
-
-			vertices.push_back(vertex);
-		}
-	}
+	Object spaceship;
+	spaceship.loadFromFile("spaceship.obj");
 
 
 	//// WEAPON MODEL LOAD
@@ -383,7 +347,7 @@ int main() {
 	////// SPACESHIP
 	glBindVertexArray(vao[0]);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(Vertex), vertices.data(), GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, (*spaceship.getVertices()).size() * sizeof(Vertex), (*spaceship.getVertices()).data(), GL_STATIC_DRAW);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]); // position vectors
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
 	glEnableVertexAttribArray(0);
@@ -466,7 +430,7 @@ int main() {
 			// .... HERE YOU MUST ADD THE CORRECT UNIFORMS FOR RENDERING THE SHADOW MAP
 			
 			glBindVertexArray(vao[0]); // Bind vertex data
-			glDrawArrays(GL_TRIANGLES, 0, vertices.size()); // Execute draw command
+			glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size()); // Execute draw command
 			glBindVertexArray(vao[1]); // Bind vertex data
 			glDrawArrays(GL_TRIANGLES, 0, vertices2.size()); // Execute draw command
 	
@@ -513,7 +477,7 @@ int main() {
 		model = glm::rotate(model, rotation2, glm::vec3(0.0f, 1.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(0.5f, 0.5f, 0.5f));
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, vertices.size());		// Execute draw commands
+		glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size());		// Execute draw commands
 
 		glBindVertexArray(vao[2]);
 		model = glm::mat4();
