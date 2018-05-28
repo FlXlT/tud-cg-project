@@ -14,6 +14,8 @@ layout(location = 0) out vec4 outColor;
 // Interpolated output data from vertex shader
 in vec3 fragPos;    // World-space position
 in vec3 fragNormal; // World-space normal
+in vec3 fragColor;
+in vec2 texCoords;
 
 void main() {
 
@@ -69,7 +71,7 @@ void main() {
 	vec3 lightDir = normalize(lightPos - fragPos);
 
 	// Diffuse shading
-	vec3 Kd = vec3(1.0, 1.0, 1.0);
+	vec3 Kd = fragColor;
 	const float diffuseFactor = dot(lightDir, fragNormal);
 	vec3 diffuse = Kd * diffuseFactor;
 	diffuse = clamp(diffuse, vec3(0, 0, 0), vec3(1.0, 1.0, 1.0));

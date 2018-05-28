@@ -28,6 +28,12 @@ void GeometricObject::loadFromFile(const char* filename) {
 				attrib.normals[3 * index.normal_index + 2]
 			};
 
+			// Set color
+			vertex.color = { 0.0f, 0.0f, 0.0f };
+
+			// Set texture coordinates
+			vertex.texCoords = { 0.0f, 0.0f };
+
 			vertices.push_back(vertex);
 		}
 	}
@@ -38,7 +44,6 @@ void GeometricObject::generateBufferObjects() {
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	
-
 	// bind VBO and VAO
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -55,6 +60,16 @@ void GeometricObject::generateBufferObjects() {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
 	glEnableVertexAttribArray(1);
+
+	// specify color vectors
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, color)));
+	glEnableVertexAttribArray(2);
+
+	// specify texture coordinates
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, texCoords)));
+	glEnableVertexAttribArray(3);
 }
 
 std::vector<Vertex>* GeometricObject::getVertices() {
