@@ -5,13 +5,11 @@
 #include "weapon.h"
 
 class Spaceship : public GameObject {
-	GeometricObject body;
-	Weapon weaponLeft;
-	Weapon weaponRight;
-	
+
 public:
 
-	float barrelRollAngle = 0;
+	Weapon weaponLeft;
+	Weapon weaponRight;
 
 	Spaceship();
 

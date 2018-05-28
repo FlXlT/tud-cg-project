@@ -3,13 +3,12 @@
 #include "game_object.h"
 
 class Weapon : public GameObject {
-	GeometricObject body;
 
-	GameObject* parent;
+	GameObject* spaceship;
 
 public:
 
-	void setParent(GameObject* parent);
+	void attachToSpaceship(GameObject* spaceship);
 
 	void buildGeometry();
 	void updateGeometry();
