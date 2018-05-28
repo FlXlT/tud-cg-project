@@ -51,12 +51,20 @@ void Scene::generateBufferObjects() {
 void Scene::handleKey(int key, int action) {
 	switch (key) {
 	case GLFW_KEY_LEFT:
-		if (action == GLFW_PRESS)   spaceship.speed.x = -0.05;
-		if (action == GLFW_RELEASE) spaceship.speed.x = 0.0;
+		if (action == GLFW_PRESS)   spaceship.targetSpeed.x = -0.05;
+		if (action == GLFW_RELEASE) spaceship.targetSpeed.x = 0.0;
 		break;
 	case GLFW_KEY_RIGHT:
-		if (action == GLFW_PRESS)   spaceship.speed.x = 0.05;
-		if (action == GLFW_RELEASE) spaceship.speed.x = 0.0;
+		if (action == GLFW_PRESS)   spaceship.targetSpeed.x = 0.05;
+		if (action == GLFW_RELEASE) spaceship.targetSpeed.x = 0.0;
+		break;
+	case GLFW_KEY_UP:
+		if (action == GLFW_PRESS)   spaceship.targetSpeed.y = 0.05;
+		if (action == GLFW_RELEASE) spaceship.targetSpeed.y = 0.0;
+		break;
+	case GLFW_KEY_DOWN:
+		if (action == GLFW_PRESS)   spaceship.targetSpeed.y = -0.05;
+		if (action == GLFW_RELEASE) spaceship.targetSpeed.y = 0.0;
 		break;
 	}
 }

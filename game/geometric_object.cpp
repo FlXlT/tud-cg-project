@@ -10,19 +10,26 @@ GeometricObject::GeometricObject(GeometricObject* p) {
 	model = glm::mat4();
 }
 
+// very basic terrain generation, will be updated to textured and waved surface
 void GeometricObject::generate() {
-	for (int i = 0; i < 3; i++) {
+	float width = 2.0f;
+	float height = 2.0f;
+
+	for (int i = 0; i < 6; i++) {
 		Vertex vertex = {};
 
 		// Retrieve coordinates for vertex by index
-		if (i == 0) {
-			vertex.pos = { -1.0f, -1.0f, 0.0f};
+		if (i == 0 || i == 3) {
+			vertex.pos = { -width, -height, 0.0f};
 		}
 		if (i == 1) {
-			vertex.pos = { 1.0f, -1.0f, 0.0f };
+			vertex.pos = { width, -height, 0.0f };
 		}
-		if (i == 2) {
-			vertex.pos = { 1.0f, 1.0f, 0.0f };
+		if (i == 2 || i == 4) {
+			vertex.pos = { width, height, 0.0f };
+		}
+		if (i == 5) {
+			vertex.pos = { -width, height, 0.0f };
 		}
 		
 
@@ -30,7 +37,7 @@ void GeometricObject::generate() {
 		vertex.normal = { 0.0f, 0.0f, 1.0f };
 
 		// Set color (white by default)
-		vertex.color = { 1.0f, 0.0f, 0.0f };
+		vertex.color = { 0.2588f, 0.525f, 0.9569f };
 
 		// Set texture coordinates
 		vertex.texCoords = { 0.0f, 0.0f };

@@ -301,7 +301,7 @@ int main() {
 	/////////////////// Create main camera
 	Camera firstCamera;
 	firstCamera.aspect = WIDTH / (float)HEIGHT;
-	firstCamera.position = glm::vec3(0.0f, 0.0f, 2.0f);
+	firstCamera.position = glm::vec3(0.0f, 0.0f, 5.0f);
 	firstCamera.forward  = -firstCamera.position; // point to origin
 	firstCamera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 	cameras.push_back(firstCamera);
@@ -309,7 +309,7 @@ int main() {
 	/////////////////// Create second camera for shadow mapping
 	Camera secondCamera;
 	secondCamera.aspect = WIDTH / (float)HEIGHT;
-	secondCamera.position = firstCamera.position;
+	secondCamera.position = glm::vec3(-1.0f, 1.0f, 5.0f);
 	secondCamera.forward  = -secondCamera.position;
 	secondCamera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 	cameras.push_back(secondCamera);
@@ -401,7 +401,7 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
-		scene.spaceship.barrelRollAngle = -weaponLeftRot;
+		//scene.spaceship.barrelRollAngle = -weaponLeftRot;
 		scene.update();
 		//scene.spaceship.loadModelMatrix();
 		//scene.spaceship.rotateZ(-weaponLeftRot);
