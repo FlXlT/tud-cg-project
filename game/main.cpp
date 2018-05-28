@@ -251,8 +251,8 @@ int main() {
 
 	// Create Texture
 	int texwidth, texheight, texchannels;
-	//stbi_uc* pixels = stbi_load("assets/textures/moon.jpg", &texwidth, &texheight, &texchannels, 3);
-	stbi_uc* pixels = stbi_load("smiley.png", &texwidth, &texheight, &texchannels, 3);
+	stbi_uc* pixels = stbi_load("assets/textures/moon.jpg", &texwidth, &texheight, &texchannels, 3);
+	//stbi_uc* pixels = stbi_load("smiley.png", &texwidth, &texheight, &texchannels, 3);
 
 	GLuint texLight;
 	glGenTextures(1, &texLight);

@@ -14,12 +14,18 @@ GeometricObject::GeometricObject(GeometricObject* p) {
 void GeometricObject::generate() {
 	int nbQuadsX = 10;
 	int nbQuadsY = 10;
+	int nbQuads = nbQuadsX * nbQuadsY;
+
+	int nbVertsX = nbQuadsX + 1;
+	int nbVertsY = nbQuadsY + 1;
+	int nbVerts = nbVertsX * nbVertsY;
 
 	float quadWidth = 0.5f;
 	float quadHeight = 0.5f;
 
 	float width = nbQuadsX * quadWidth;
 	float height = nbQuadsY * quadHeight;
+	float depth = 1.5f;
 
 	int nbQuadsPerTexX = 10;
 	int nbQuadsPerTexY = 10;
@@ -36,6 +42,16 @@ void GeometricObject::generate() {
 		position.z
 	};
 
+	// generate random z coordinates
+	float minZ = position.z;
+	float maxZ = depth;
+	
+	std::vector<float> zCoords;
+	for (int zi = 0; zi < nbVerts; zi++) {
+		float z = minZ + static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / (maxZ - minZ)));
+		zCoords.push_back(z);
+	}
+
 	for (int qx = 0; qx < nbQuadsX; qx++) {
 		for (int qy = 0; qy < nbQuadsY; qy++) {
 			glm::vec3 offset = {
@@ -51,29 +67,44 @@ void GeometricObject::generate() {
 
 			// Generate quad
 			for (int i = 0; i < 6; i++) {
+				int vx;
+				int vy;
 				Vertex vertex = {};
 
 				// compute relative coordinates of quad vertex
 				if (i == 0 || i == 3) {
 					vertex.pos = { 0.0f, 0.0f, 0.0f };
 					vertex.texCoords = { 0.0f, 1.0f };
+					vx = qx;
+					vy = qy;
 				}
 				if (i == 1) {
 					vertex.pos = { quadWidth, 0.0f, 0.0f };
 					vertex.texCoords = { 1.0f, 1.0f };
+					vx = qx + 1;
+					vy = qy;
 				}
 				if (i == 2 || i == 4) {
 					vertex.pos = { quadWidth, quadHeight, 0.0f };
 					vertex.texCoords = { 1.0f, 0.0f };
+					vx = qx + 1;
+					vy = qy + 1;
 				}
 				if (i == 5) {
 					vertex.pos = { 0.0f, quadHeight, 0.0f };
 					vertex.texCoords = { 0.0f, 0.0f };
+					vx = qx;
+					vy = qy + 1;
 				}
+
+				// assign consistent random z coordinate
+				int zIndex = vx + vy * (nbVertsX);
+				vertex.pos.z = zCoords[zIndex];
 
 				// make coordinates absolute by application start position and offset
 				vertex.pos = vertex.pos + start + offset;
 
+				// adjust texture coordinates such that texture spans right amount of quads
 				vertex.texCoords = vertex.texCoords * texSizePerQuad + texCoordsOffset;
 
 				// compute normal vector

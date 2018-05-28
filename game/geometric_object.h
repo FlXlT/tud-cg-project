@@ -22,6 +22,9 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+// random number generation
+#include <cstdlib>
+
 class GeometricObject {
 	// List of vertices that constitute the geometric representation of this object
 	std::vector<Vertex> vertices;
