@@ -1,6 +1,10 @@
 // Implements Object
 #include "geometric_object.h"
 
+void GeometricObject::generate() {
+
+}
+
 void GeometricObject::loadFromFile(const char* filename) {
 	std::string err;
 
@@ -28,8 +32,8 @@ void GeometricObject::loadFromFile(const char* filename) {
 				attrib.normals[3 * index.normal_index + 2]
 			};
 
-			// Set color
-			vertex.color = { 0.0f, 0.0f, 0.0f };
+			// Set color (white by default)
+			vertex.color = { 1.0f, 1.0f, 1.0f };
 
 			// Set texture coordinates
 			vertex.texCoords = { 0.0f, 0.0f };
@@ -102,6 +106,9 @@ void GeometricObject::popModelMatrix() {
 }
 void GeometricObject::loadModelMatrix() {
 	model = modelStack.back();
+}
+void GeometricObject::applyPosition() {
+	translate(position);
 }
 
 void GeometricObject::translate(glm::vec3 translation) {

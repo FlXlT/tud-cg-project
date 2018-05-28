@@ -10,6 +10,12 @@
     <ClCompile Include="scene.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="game_object.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="spaceship.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -36,6 +42,12 @@
       <Filter>source</Filter>
     </ClInclude>
     <ClInclude Include="scene.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="game_object.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="spaceship.h">
       <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>

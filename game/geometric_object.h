@@ -48,6 +48,7 @@ public:
 	void generateBufferObjects();
 
 	void loadFromFile(const char* filename);
+	void generate();
 	std::vector<Vertex>* getVertices();
 	int size();
 	Vertex* data();
@@ -58,6 +59,7 @@ public:
 	void pushModelMatrix();
 	void popModelMatrix();
 	void loadModelMatrix();
+	void applyPosition();
 
 	void translate(glm::vec3 translation);
 	void translateX(float translation);

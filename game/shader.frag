@@ -1,12 +1,12 @@
 #version 430
 
 // Global variables for lighting calculations
-layout(location = 1) uniform vec3 viewPos;
-layout(location = 2) uniform sampler2D texShadow;
-layout(location = 3) uniform float time;
+layout(location = 2) uniform vec3 viewPos;
+layout(location = 3) uniform sampler2D texShadow;
+layout(location = 4) uniform float time;
 
-layout(location = 4) uniform mat4 lightMVP;
-layout(location = 5) uniform vec3 lightPos = vec3(3,3,3);
+layout(location = 5) uniform mat4 lightMVP;
+layout(location = 6) uniform vec3 lightPos = vec3(0, 0, 4);
 
 // Output for on-screen color
 layout(location = 0) out vec4 outColor;
@@ -66,12 +66,16 @@ void main() {
 			iterations += 1.0;
 		}
 	}
+
+	inShadow = true;
+	sum = iterations;
 	
 	//vec3 lightPosVariance = vec3(sin(time)*3, 3.0, cos(time)*3);
 	vec3 lightDir = normalize(lightPos - fragPos);
 
 	// Diffuse shading
 	vec3 Kd = fragColor;
+	Kd = vec3(1.0f, 1.0f, 1.0f);
 	const float diffuseFactor = dot(lightDir, fragNormal);
 	vec3 diffuse = Kd * diffuseFactor;
 	diffuse = clamp(diffuse, vec3(0, 0, 0), vec3(1.0, 1.0, 1.0));
@@ -91,5 +95,6 @@ void main() {
 		specular = vec3(0,0,0);
 	}
 	
-	outColor =  (sum / iterations) * vec4(diffuse + specular, 1.0);
+	outColor = (sum / iterations) * vec4(diffuse + specular, 1.0);
+	//outColor = vec4(vec3(1, 1, 1), 1.0);
 }

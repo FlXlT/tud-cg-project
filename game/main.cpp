@@ -298,15 +298,17 @@ int main() {
 	/////////////////// Create main camera
 	Camera firstCamera;
 	firstCamera.aspect = WIDTH / (float)HEIGHT;
-	mainCamera.position = glm::vec3(0.0f, 0.0f, 3.0f);
-	mainCamera.forward  = glm::vec3(0.0f, 0.0f, 0.0f);
+	firstCamera.position = glm::vec3(0.0f, 0.0f, 2.0f);
+	firstCamera.forward  = -firstCamera.position; // point to origin
+	firstCamera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 	cameras.push_back(firstCamera);
 
 	/////////////////// Create second camera for shadow mapping
 	Camera secondCamera;
 	secondCamera.aspect = WIDTH / (float)HEIGHT;
-	mainCamera.position = glm::vec3(0.0f, 0.0f, 4.0f);
-	mainCamera.forward  = glm::vec3(0.0f, 0.0f, 0.0f);
+	secondCamera.position = firstCamera.position;
+	secondCamera.forward  = -secondCamera.position;
+	secondCamera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 	cameras.push_back(secondCamera);
 
 	// Assign the first camera as the main viewport
@@ -352,7 +354,7 @@ int main() {
 			for (int i = 0; i < scene.objects.size(); i++) {
 				GeometricObject obj = *scene.objects[i];
 				glBindVertexArray(obj.vao);
-				glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
+				glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
 				glDrawArrays(GL_TRIANGLES, 0, obj.size());
 			}
 
@@ -362,22 +364,16 @@ int main() {
 
 		// Bind the shader
 		glUseProgram(mainProgram);
-		updateCamera(mainCamera);
+		//updateCamera(mainCamera);
 		glm::mat4 mvp = mainCamera.vpMatrix();
 
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp));
 		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera.position)); // Set view
 		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime())); // Expose current time in shader uniform
 
-		// Set view position
-		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera.position));
-		//printf("Camera pos: %f %f %f \n", mainCamera.position.x, mainCamera.position.y, mainCamera.position.z);
-
-		// Expose current time in shader uniform
-		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime()));
-
 		// Set MVP from the perspective of the shadow camera
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "lightMVP"), 1, GL_FALSE, glm::value_ptr(lightMVP));
+		glUniform3fv(glGetUniformLocation(mainProgram, "lightPos"), 1, glm::value_ptr(secondCamera.position));
 
 		// Bind vertex data
 		//glBindVertexArray(vao);
@@ -401,17 +397,25 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
+
+		scene.spaceship.loadModelMatrix();
+		scene.spaceship.rotateZ(-weaponLeftRot);
+		scene.spaceship.applyPosition();
+
 		scene.weaponLeft.loadModelMatrix();
 		scene.weaponLeft.rotateY(weaponLeftRot);
+		scene.weaponLeft.applyPosition();
 
 		scene.weaponRight.loadModelMatrix();
 		scene.weaponRight.rotateY(weaponRightRot);
+		scene.weaponRight.applyPosition();
 
 		// Render objects
 		for (int i = 0; i < scene.objects.size(); i++) {
 			GeometricObject obj = *scene.objects[i];
 			glBindVertexArray(obj.vao);
-			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
+			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp * *obj.getModelMatrix()));
+			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
 			glDrawArrays(GL_TRIANGLES, 0, obj.size());
 		}
 
