@@ -1,0 +1,50 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="geometric_object.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shader.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shader.vert">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shadow.frag">
+      <Filter>shaders</Filter>
+    </None>
+    <None Include="shadow.vert">
+      <Filter>shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="camera.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="vertex.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="geometric_object.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="shaders">
+      <UniqueIdentifier>{cea67004-6304-4481-999f-a09737dfc8da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{be88a58c-b129-43b1-adaf-ac2b9f560829}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

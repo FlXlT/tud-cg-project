@@ -20,8 +20,8 @@ struct Camera
 
 	Camera::Camera()
 	: position(glm::vec3(0, 0, 0))
-	, forward (glm::vec3(0, 0,-1))
-	, up      (glm::vec3(0, 1, 0)) 
+	, forward (glm::vec3(0, 0,0))
+	, up      (glm::vec3(0, 0, 0)) 
 	, fov     (glm::pi<float>() / 4.f)
 	, aspect  (1.f)
 	, near    (0.1f)
