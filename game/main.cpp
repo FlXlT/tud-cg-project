@@ -354,7 +354,8 @@ int main() {
 			for (int i = 0; i < scene.objects.size(); i++) {
 				GeometricObject obj = *scene.objects[i];
 				glBindVertexArray(obj.vao);
-				glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
+				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
+				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
 				glDrawArrays(GL_TRIANGLES, 0, obj.size());
 			}
 
@@ -364,7 +365,7 @@ int main() {
 
 		// Bind the shader
 		glUseProgram(mainProgram);
-		//updateCamera(mainCamera);
+		updateCamera(mainCamera);
 		glm::mat4 mvp = mainCamera.vpMatrix();
 
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp));

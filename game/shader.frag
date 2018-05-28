@@ -66,9 +66,6 @@ void main() {
 			iterations += 1.0;
 		}
 	}
-
-	inShadow = true;
-	sum = iterations;
 	
 	//vec3 lightPosVariance = vec3(sin(time)*3, 3.0, cos(time)*3);
 	vec3 lightDir = normalize(lightPos - fragPos);

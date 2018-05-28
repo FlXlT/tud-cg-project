@@ -2,7 +2,32 @@
 #include "geometric_object.h"
 
 void GeometricObject::generate() {
+	for (int i = 0; i < 3; i++) {
+		Vertex vertex = {};
 
+		// Retrieve coordinates for vertex by index
+		if (i == 0) {
+			vertex.pos = { -1.0f, -1.0f, 0.0f};
+		}
+		if (i == 1) {
+			vertex.pos = { 1.0f, -1.0f, 0.0f };
+		}
+		if (i == 2) {
+			vertex.pos = { 1.0f, 1.0f, 0.0f };
+		}
+		
+
+		// Retrieve components of normal by index
+		vertex.normal = { 0.0f, 0.0f, 1.0f };
+
+		// Set color (white by default)
+		vertex.color = { 1.0f, 0.0f, 0.0f };
+
+		// Set texture coordinates
+		vertex.texCoords = { 0.0f, 0.0f };
+
+		vertices.push_back(vertex);
+	}
 }
 
 void GeometricObject::loadFromFile(const char* filename) {

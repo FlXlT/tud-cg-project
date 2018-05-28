@@ -14,6 +14,7 @@ public:
 	GeometricObject spaceship;
 	GeometricObject weaponLeft;
 	GeometricObject weaponRight;
+	GeometricObject surface;
 
 	void build();
 	void generateBufferObjects();
