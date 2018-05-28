@@ -4,7 +4,10 @@
     <ClCompile Include="main.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="object.cpp">
+    <ClCompile Include="geometric_object.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
       <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
@@ -29,7 +32,10 @@
     <ClInclude Include="vertex.h">
       <Filter>source</Filter>
     </ClInclude>
-    <ClInclude Include="object.h">
+    <ClInclude Include="geometric_object.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
       <Filter>source</Filter>
     </ClInclude>
   </ItemGroup>

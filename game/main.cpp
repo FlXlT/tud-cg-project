@@ -30,7 +30,9 @@
 #include <math.h>
 
 #include "vertex.h"
-#include "object.h"
+
+#include "scene.h"
+#include "geometric_object.h"
 
 // Configuration
 const int WIDTH = 800;
@@ -132,12 +134,15 @@ void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
 	weaponRot = (float) atan((xpos - WIDTH/2) / (ypos - HEIGHT/2));
-	weaponLeftRot = (float)-1*atan((xpos - (WIDTH  / 2 + WIDTH * 0.075)) / (ypos - HEIGHT / 2));
-	weaponRightRot = (float)-1*atan((xpos - (WIDTH / 2 - WIDTH * 0.075)) / (ypos - HEIGHT / 2));
+	weaponRightRot = (float)-1*atan((xpos - (WIDTH  / 2 + WIDTH * 0.075)) / (ypos - HEIGHT / 2));
+	weaponLeftRot = (float)-1*atan((xpos - (WIDTH / 2 - WIDTH * 0.075)) / (ypos - HEIGHT / 2));
 	//camCursorPosHandler(xpos, ypos);
 }
 
 int main() {
+	Scene scene;
+	scene.build();
+
 	if (!glfwInit()) {
 		std::cerr << "Failed to initialize GLFW!" << std::endl;
 		return EXIT_FAILURE;
@@ -260,48 +265,10 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	////////////////////////// Load vertices of model
 
-	Object spaceship;
-	spaceship.loadFromFile("spaceship.obj");
-	Object singleWeapon;
-	singleWeapon.loadFromFile("SingleWeapon.obj");
+	scene.generateBufferObjects();
 
-	// World space positions of the models
-	glm::vec3 modelPositions[] = {
-		glm::vec3( 0.0f,  -0.5f,  0.0f),     // Spaceship location
-		glm::vec3( 0.0f,   0.0f,  0.0f),
-		glm::vec3(-0.125f, -0.42f, 0.0f),	   // Left weapon from spaceship
-		glm::vec3( 0.125f, -0.42f, 0.0f)	   // Right weapon from spaceship
-	};
-
-	//////////////////// Create Vertex Buffer Objects
-	GLuint vao[3], vbo[3];
-	glGenVertexArrays(3, vao); // Bind vertex data to shader inputs using their index (location)
-	glGenBuffers(3, vbo);
-
-	////// SPACESHIP
-	glBindVertexArray(vao[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
-	glBufferData(GL_ARRAY_BUFFER, (*spaceship.getVertices()).size() * sizeof(Vertex), (*spaceship.getVertices()).data(), GL_STATIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]); // position vectors
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[0]); // normal vectors
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
-	glEnableVertexAttribArray(1);
-
-	//////// SINGLE WEAPON
-	glBindVertexArray(vao[2]);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]);
-	glBufferData(GL_ARRAY_BUFFER, (*singleWeapon.getVertices()).size() * sizeof(Vertex), (*singleWeapon.getVertices()).data(), GL_DYNAMIC_DRAW);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]); // The position vectors
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, pos)));
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vbo[2]); // The normal vectors
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), reinterpret_cast<void*>(offsetof(Vertex, normal)));
-	glEnableVertexAttribArray(1);
-
+	
 	//////////////////// Create Shadow Texture
 	GLuint texShadow;
 	const int SHADOWTEX_WIDTH  = 1024;
@@ -371,9 +338,6 @@ int main() {
 
 			// .... HERE YOU MUST ADD THE CORRECT UNIFORMS FOR RENDERING THE SHADOW MAP
 
-			glBindVertexArray(vao[0]); // Bind vertex data
-			glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size()); // Execute draw command
-
 			//// Set uniforms in fragment shader
 			// Set projection matrix
 			glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP));
@@ -385,10 +349,10 @@ int main() {
 			glUniform1f(glGetUniformLocation(shadowProgram, "time"), static_cast<float>(glfwGetTime()));
 
 			// Bind vertex data
-			glBindVertexArray(vao[0]);
+			//glBindVertexArray(spaceship.vao);
 
 			// Execute draw command
-			glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size());
+			//glDrawArrays(GL_TRIANGLES, 0, spaceship.size());
 
 			// Unbind the off-screen framebuffer
 			glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -434,39 +398,19 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
-		glBindVertexArray(vao[0]); // Bind vertex data
+		scene.weaponLeft.loadModelMatrix();
+		scene.weaponLeft.rotateY(weaponLeftRot);
 
+		scene.weaponRight.loadModelMatrix();
+		scene.weaponRight.rotateY(weaponRightRot);
 
-		float angleX = -90 * atan(1) * 4 / 180;
-		float angleY = 180 * atan(1) * 4 / 180;
-
-		spaceship.clearModelMatrix();
-		spaceship.translate(modelPositions[0]);
-		spaceship.rotateX(angleX);
-		spaceship.rotateY(angleY);
-		spaceship.scale(glm::vec3(0.5f, 0.5f, 0.5f));
-
-		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*spaceship.getModelMatrix()));
-		glDrawArrays(GL_TRIANGLES, 0, (*spaceship.getVertices()).size());		// Execute draw commands
-
-		glm::mat4 model;
-
-		glBindVertexArray(vao[2]);
-		model = glm::mat4();
-		model = glm::translate(model, modelPositions[2]);
-		model = glm::rotate(model, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, weaponRightRot, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
-		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, (*singleWeapon.getVertices()).size());
-
-		model = glm::mat4();
-		model = glm::translate(model, modelPositions[3]);
-		model = glm::rotate(model, angleX, glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, weaponLeftRot, glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
-		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(model));
-		glDrawArrays(GL_TRIANGLES, 0, (*singleWeapon.getVertices()).size());
+		// Render objects
+		for (int i = 0; i < scene.objects.size(); i++) {
+			GeometricObject obj = *scene.objects[i];
+			glBindVertexArray(obj.vao);
+			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
+			glDrawArrays(GL_TRIANGLES, 0, obj.size());
+		}
 
 		// Present result to the screen
 		glfwSwapBuffers(window);

@@ -12,7 +12,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="object.cpp" />
+    <ClCompile Include="geometric_object.cpp" />
+    <ClCompile Include="scene.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag" />
@@ -22,7 +23,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
-    <ClInclude Include="object.h" />
+    <ClInclude Include="geometric_object.h" />
+    <ClInclude Include="scene.h" />
     <ClInclude Include="vertex.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

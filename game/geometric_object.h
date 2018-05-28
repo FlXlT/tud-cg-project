@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GL/glew.h>
+
 // Vector datastructure
 #include <vector>
 // String datastructure
@@ -20,12 +22,13 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
-class Object {
+class GeometricObject {
 	// List of vertices that constitute the geometric representation of this object
 	std::vector<Vertex> vertices;
 
 	// The model matrix for this object
 	glm::mat4 model;
+	std::vector<glm::mat4> modelStack;
 
 	// Tiny OBJ Loader Related Attributes
 	tinyobj::attrib_t attrib;
@@ -34,11 +37,27 @@ class Object {
 
 public:
 
+	glm::vec3 position;
+	glm::vec3 rotationAxis;
+	float rotationAngle;
+	glm::vec3 scalingFactors;
+
+	GLuint vbo;
+	GLuint vao;
+
+	void generateBufferObjects();
+
 	void loadFromFile(const char* filename);
 	std::vector<Vertex>* getVertices();
+	int size();
+	Vertex* data();
+
 	glm::mat4* getModelMatrix();
 	void setModelMatrix(glm::mat4 matrix);
 	void clearModelMatrix();
+	void pushModelMatrix();
+	void popModelMatrix();
+	void loadModelMatrix();
 
 	void translate(glm::vec3 translation);
 	void translateX(float translation);
