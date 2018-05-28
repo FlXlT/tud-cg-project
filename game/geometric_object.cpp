@@ -1,6 +1,15 @@
 // Implements Object
 #include "geometric_object.h"
 
+GeometricObject::GeometricObject() {
+	parent = NULL;
+	model = glm::mat4();
+}
+GeometricObject::GeometricObject(GeometricObject* p) {
+	parent = p;
+	model = glm::mat4();
+}
+
 void GeometricObject::generate() {
 	for (int i = 0; i < 3; i++) {
 		Vertex vertex = {};
@@ -114,7 +123,13 @@ Vertex* GeometricObject::data() {
 }
 
 glm::mat4* GeometricObject::getModelMatrix() {
-	return &model;
+	if (parent) {
+		completeModel = *parent->getModelMatrix() * model;
+		return &completeModel;
+	}
+	else {
+		return &model;
+	}
 }
 void GeometricObject::setModelMatrix(glm::mat4 matrix) {
 	model = matrix;

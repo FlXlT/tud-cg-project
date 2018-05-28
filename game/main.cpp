@@ -398,18 +398,18 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
+		scene.spaceship.updateGeometry(-weaponLeftRot);
+		//scene.spaceship.loadModelMatrix();
+		//scene.spaceship.rotateZ(-weaponLeftRot);
+		//scene.spaceship.applyPosition();
 
-		scene.spaceship.loadModelMatrix();
-		scene.spaceship.rotateZ(-weaponLeftRot);
-		scene.spaceship.applyPosition();
-
-		scene.weaponLeft.loadModelMatrix();
+		/*scene.weaponLeft.loadModelMatrix();
 		scene.weaponLeft.rotateY(weaponLeftRot);
 		scene.weaponLeft.applyPosition();
 
 		scene.weaponRight.loadModelMatrix();
 		scene.weaponRight.rotateY(weaponRightRot);
-		scene.weaponRight.applyPosition();
+		scene.weaponRight.applyPosition();*/
 
 		// Render objects
 		for (int i = 0; i < scene.objects.size(); i++) {

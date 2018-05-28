@@ -28,6 +28,7 @@ class GeometricObject {
 
 	// The model matrix for this object
 	glm::mat4 model;
+	glm::mat4 completeModel;
 	std::vector<glm::mat4> modelStack;
 
 	// Tiny OBJ Loader Related Attributes
@@ -37,13 +38,16 @@ class GeometricObject {
 
 public:
 
+	// Parent geometric object to which this object is "attached"
+	GeometricObject * parent;
+
 	glm::vec3 position;
-	glm::vec3 rotationAxis;
-	float rotationAngle;
-	glm::vec3 scalingFactors;
 
 	GLuint vbo;
 	GLuint vao;
+
+	GeometricObject();
+	GeometricObject(GeometricObject* parent);
 
 	void generateBufferObjects();
 
