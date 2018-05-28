@@ -117,10 +117,10 @@ void GeometricObject::generate() {
 				neighbourIndices.push_back(v + dx + dy);
 			}
 			if (vx > minX && vy < maxY) {
-				neighbourIndices.push_back(v - dx + dy);
+				//neighbourIndices.push_back(v - dx + dy);
 			}
 			if (vx < maxX && vy > minY) {
-				neighbourIndices.push_back(v + dx - dy);
+				//neighbourIndices.push_back(v + dx - dy);
 			}
 
 			for (int i = 0; i < neighbourIndices.size(); i++) {
