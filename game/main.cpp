@@ -251,6 +251,7 @@ int main() {
 
 	// Create Texture
 	int texwidth, texheight, texchannels;
+	//stbi_uc* pixels = stbi_load("assets/textures/moon.jpg", &texwidth, &texheight, &texchannels, 3);
 	stbi_uc* pixels = stbi_load("smiley.png", &texwidth, &texheight, &texchannels, 3);
 
 	GLuint texLight;
@@ -301,7 +302,7 @@ int main() {
 	/////////////////// Create main camera
 	Camera firstCamera;
 	firstCamera.aspect = WIDTH / (float)HEIGHT;
-	firstCamera.position = glm::vec3(0.0f, 0.0f, 5.0f);
+	firstCamera.position = glm::vec3(0.0f, 0.0f, 7.0f);
 	firstCamera.forward  = -firstCamera.position; // point to origin
 	firstCamera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 	cameras.push_back(firstCamera);

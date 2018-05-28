@@ -12,37 +12,79 @@ GeometricObject::GeometricObject(GeometricObject* p) {
 
 // very basic terrain generation, will be updated to textured and waved surface
 void GeometricObject::generate() {
-	float width = 2.0f;
-	float height = 2.0f;
+	int nbQuadsX = 10;
+	int nbQuadsY = 10;
 
-	for (int i = 0; i < 6; i++) {
-		Vertex vertex = {};
+	float quadWidth = 0.5f;
+	float quadHeight = 0.5f;
 
-		// Retrieve coordinates for vertex by index
-		if (i == 0 || i == 3) {
-			vertex.pos = { -width, -height, 0.0f};
-			vertex.texCoords = { 0.0f, 0.0f };
+	float width = nbQuadsX * quadWidth;
+	float height = nbQuadsY * quadHeight;
+
+	int nbQuadsPerTexX = 10;
+	int nbQuadsPerTexY = 10;
+
+	glm::vec2 texSizePerQuad = {
+		1.0f / (float)nbQuadsPerTexX,
+		1.0f / (float)nbQuadsPerTexY
+	};
+
+	// center of generated geometry should be at position
+	glm::vec3 start = {
+		position.x - width / 2,
+		position.y - height / 2,
+		position.z
+	};
+
+	for (int qx = 0; qx < nbQuadsX; qx++) {
+		for (int qy = 0; qy < nbQuadsY; qy++) {
+			glm::vec3 offset = {
+				qx * quadWidth,
+				qy * quadHeight,
+				0
+			};
+			glm::vec2 texCoordsOffset = {
+				(float)(qx % nbQuadsPerTexX),
+				nbQuadsPerTexY - 1 - (float)(qy % nbQuadsPerTexY)
+			};
+			texCoordsOffset = texCoordsOffset * texSizePerQuad;
+
+			// Generate quad
+			for (int i = 0; i < 6; i++) {
+				Vertex vertex = {};
+
+				// compute relative coordinates of quad vertex
+				if (i == 0 || i == 3) {
+					vertex.pos = { 0.0f, 0.0f, 0.0f };
+					vertex.texCoords = { 0.0f, 1.0f };
+				}
+				if (i == 1) {
+					vertex.pos = { quadWidth, 0.0f, 0.0f };
+					vertex.texCoords = { 1.0f, 1.0f };
+				}
+				if (i == 2 || i == 4) {
+					vertex.pos = { quadWidth, quadHeight, 0.0f };
+					vertex.texCoords = { 1.0f, 0.0f };
+				}
+				if (i == 5) {
+					vertex.pos = { 0.0f, quadHeight, 0.0f };
+					vertex.texCoords = { 0.0f, 0.0f };
+				}
+
+				// make coordinates absolute by application start position and offset
+				vertex.pos = vertex.pos + start + offset;
+
+				vertex.texCoords = vertex.texCoords * texSizePerQuad + texCoordsOffset;
+
+				// compute normal vector
+				vertex.normal = { 0.0f, 0.0f, 1.0f };
+
+				// set color
+				vertex.color = { 133.0f / 255.0f, 104.0f / 255.0f, 238.0f / 255.0f };
+
+				vertices.push_back(vertex);
+			}
 		}
-		if (i == 1) {
-			vertex.pos = { width, -height, 0.0f };
-			vertex.texCoords = { 1.0f, 0.0f };
-		}
-		if (i == 2 || i == 4) {
-			vertex.pos = { width, height, 0.0f };
-			vertex.texCoords = { 1.0f, 1.0f };
-		}
-		if (i == 5) {
-			vertex.pos = { -width, height, 0.0f };
-			vertex.texCoords = { 0.0f, 1.0f };
-		}
-
-		// Retrieve components of normal by index
-		vertex.normal = { 0.0f, 0.0f, 1.0f };
-
-		// Set color (white by default)
-		vertex.color = { 0.2588f, 0.525f, 0.9569f };
-
-		vertices.push_back(vertex);
 	}
 }
 
