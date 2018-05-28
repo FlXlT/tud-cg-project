@@ -1,5 +1,8 @@
 #include "scene.h"
 
+// for event handling
+#include <GLFW/glfw3.h>
+
 void Scene::build() {
 	float angleX = 90 * atan(1) * 4 / 180;
 	float angleY = 180 * atan(1) * 4 / 180;
@@ -43,4 +46,22 @@ void Scene::generateBufferObjects() {
 	for (int i = 0; i < objects.size(); i++) {
 		(*objects[i]).generateBufferObjects();
 	}
+}
+
+void Scene::handleKey(int key, int action) {
+	switch (key) {
+	case GLFW_KEY_LEFT:
+		if (action == GLFW_PRESS)   spaceship.speed.x = -0.05;
+		if (action == GLFW_RELEASE) spaceship.speed.x = 0.0;
+		break;
+	case GLFW_KEY_RIGHT:
+		if (action == GLFW_PRESS)   spaceship.speed.x = 0.05;
+		if (action == GLFW_RELEASE) spaceship.speed.x = 0.0;
+		break;
+	}
+}
+
+void Scene::update() {
+	spaceship.update();
+	spaceship.updateGeometry();
 }

@@ -42,6 +42,9 @@ float weaponRot = 0.0;
 float weaponLeftRot = 0.0;
 float weaponRightRot = 0.0;
 
+// Scene
+Scene scene;
+
 // Setup a set of cameras
 std::vector<Camera> cameras;
 // Initialize mainCamera which is visible for the user.
@@ -111,6 +114,7 @@ void APIENTRY debugCallback(GLenum source, GLenum type, GLuint id, GLenum severi
 void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	cameraKeyboardHandler(key, action);
+	scene.handleKey(key, action);
 
 	switch (key)
 	{
@@ -140,7 +144,6 @@ void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 }
 
 int main() {
-	Scene scene;
 	scene.build();
 
 	if (!glfwInit()) {
@@ -398,7 +401,8 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
-		scene.spaceship.updateGeometry(-weaponLeftRot);
+		scene.spaceship.barrelRollAngle = -weaponLeftRot;
+		scene.update();
 		//scene.spaceship.loadModelMatrix();
 		//scene.spaceship.rotateZ(-weaponLeftRot);
 		//scene.spaceship.applyPosition();

@@ -19,4 +19,8 @@ public:
 
 	void build();
 	void generateBufferObjects();
+
+	void handleKey(int key, int action);
+
+	void update();
 };

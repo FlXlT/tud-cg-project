@@ -1,18 +1,22 @@
 #include "spaceship.h"
 
-void Spaceship::buildGeometry() {
-	body.loadFromFile("spaceship.obj");
-	body.position = glm::vec3(0.0f, -0.2f, 0.5f);
-	updateGeometry(0.0f);
+Spaceship::Spaceship() {
+	position = glm::vec3(0.0f, -0.2f, 0.5f);
 }
 
-void Spaceship::updateGeometry(float angle) {
+void Spaceship::buildGeometry() {
+	body.loadFromFile("spaceship.obj");
+	updateGeometry();
+}
+
+void Spaceship::updateGeometry() {
 	float angleX = 90 * atan(1) * 4 / 180;
 	float angleY = 180 * atan(1) * 4 / 180;
 
 	body.clearModelMatrix();
+	body.position = position;
 	body.applyPosition();
-	body.rotateY(angle);
+	body.rotateY(barrelRollAngle);
 	body.rotateX(angleX);
 	body.translate(glm::vec3(0.0f, -1.0f, 0.0f));
 }
