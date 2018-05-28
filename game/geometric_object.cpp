@@ -81,7 +81,61 @@ void GeometricObject::generate() {
 		}
 	}
 
+
 	// generate normals
+	int dx = 1;
+	int dy = nbVertsX;
+	int minX = 0;
+	int maxX = nbVertsX - 1;
+	int minY = 0;
+	int maxY = nbVertsY - 1;
+
+	for (int vx = 0; vx < nbVertsX; vx++) {
+		for (int vy = 0; vy < nbVertsY; vy++) {
+			int v = vx + vy * (nbVertsX);
+
+			glm::vec3 pos = positions[v];
+			glm::vec3 norm = glm::vec3(0.0f, 0.0f, 0.0f);
+
+			std::vector<int> neighbourIndices;
+			if (vx > minX) {
+				neighbourIndices.push_back(v - dx);
+			}
+			if (vx < maxX) {
+				neighbourIndices.push_back(v + dx);
+			}
+			if (vy > minY) {
+				neighbourIndices.push_back(v - dy);
+			}
+			if (vy < maxY) {
+				neighbourIndices.push_back(v + dy);
+			}
+			if (vx > minX && vy > minY) {
+				neighbourIndices.push_back(v - dx - dy);
+			}
+			if (vx < maxX && vy < maxY) {
+				neighbourIndices.push_back(v + dx + dy);
+			}
+			if (vx > minX && vy < maxY) {
+				neighbourIndices.push_back(v - dx + dy);
+			}
+			if (vx < maxX && vy > minY) {
+				neighbourIndices.push_back(v + dx - dy);
+			}
+
+			for (int i = 0; i < neighbourIndices.size(); i++) {
+				norm += pos - positions[i];
+			}
+			normalize(norm);
+			// dirty trick to make sure all norms are on the right side of the surface
+			if (norm.z < 0) {
+				norm = glm::vec3(-1) * norm;
+			}
+
+			normals[v] = norm;
+		}
+	}
+
 
 	// generate vertices
 	for (int qx = 0; qx < nbQuadsX; qx++) {
@@ -128,8 +182,8 @@ void GeometricObject::generate() {
 				// adjust texture coordinates such that texture spans right amount of quads
 				vertex.texCoords = vertex.texCoords * texSizePerQuad + texCoordsOffset;
 
-				// compute normal vector, useless at this point, overwritten in later pass
-				vertex.normal = { 0.0f, 0.0f, 1.0f };
+				// load corresponding computed normal
+				vertex.normal = normals[v];
 
 				// set color
 				vertex.color = { 133.0f / 255.0f, 104.0f / 255.0f, 238.0f / 255.0f };
