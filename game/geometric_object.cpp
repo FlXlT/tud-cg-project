@@ -43,7 +43,7 @@ void GeometricObject::generate() {
 	};
 
 	// generate random z coordinates
-	float minZ = position.z;
+	float minZ = 0;
 	float maxZ = depth;
 	
 	std::vector<float> zCoords;
@@ -52,13 +52,40 @@ void GeometricObject::generate() {
 		zCoords.push_back(z);
 	}
 
-	for (int qx = 0; qx < nbQuadsX; qx++) {
-		for (int qy = 0; qy < nbQuadsY; qy++) {
+	std::vector<glm::vec3> positions;
+	positions.resize(nbVerts);
+	std::vector<glm::vec3> normals;
+	normals.resize(nbVerts);
+
+	// generate positions
+	for (int vx = 0; vx < nbVertsX; vx++) {
+		for (int vy = 0; vy < nbVertsY; vy++) {
+			int v = vx + vy * (nbVertsX);
+
 			glm::vec3 offset = {
-				qx * quadWidth,
-				qy * quadHeight,
+				vx * quadWidth,
+				vy * quadHeight,
 				0
 			};
+
+			glm::vec3 pos;
+
+			// assign consistent random z coordinate
+			pos.z = zCoords[v];
+
+			// make coordinates absolute by application of start position and offset
+			pos = pos + start + offset;
+
+			// index position
+			positions[v] = pos;
+		}
+	}
+
+	// generate normals
+
+	// generate vertices
+	for (int qx = 0; qx < nbQuadsX; qx++) {
+		for (int qy = 0; qy < nbQuadsY; qy++) {
 			glm::vec2 texCoordsOffset = {
 				(float)(qx % nbQuadsPerTexX),
 				nbQuadsPerTexY - 1 - (float)(qy % nbQuadsPerTexY)
@@ -73,41 +100,35 @@ void GeometricObject::generate() {
 
 				// compute relative coordinates of quad vertex
 				if (i == 0 || i == 3) {
-					vertex.pos = { 0.0f, 0.0f, 0.0f };
 					vertex.texCoords = { 0.0f, 1.0f };
 					vx = qx;
 					vy = qy;
 				}
 				if (i == 1) {
-					vertex.pos = { quadWidth, 0.0f, 0.0f };
 					vertex.texCoords = { 1.0f, 1.0f };
 					vx = qx + 1;
 					vy = qy;
 				}
 				if (i == 2 || i == 4) {
-					vertex.pos = { quadWidth, quadHeight, 0.0f };
 					vertex.texCoords = { 1.0f, 0.0f };
 					vx = qx + 1;
 					vy = qy + 1;
 				}
 				if (i == 5) {
-					vertex.pos = { 0.0f, quadHeight, 0.0f };
 					vertex.texCoords = { 0.0f, 0.0f };
 					vx = qx;
 					vy = qy + 1;
 				}
 
-				// assign consistent random z coordinate
-				int zIndex = vx + vy * (nbVertsX);
-				vertex.pos.z = zCoords[zIndex];
+				int v = vx + vy * (nbVertsX);
 
-				// make coordinates absolute by application start position and offset
-				vertex.pos = vertex.pos + start + offset;
+				// load corresponding generated position
+				vertex.pos = positions[v];
 
 				// adjust texture coordinates such that texture spans right amount of quads
 				vertex.texCoords = vertex.texCoords * texSizePerQuad + texCoordsOffset;
 
-				// compute normal vector
+				// compute normal vector, useless at this point, overwritten in later pass
 				vertex.normal = { 0.0f, 0.0f, 1.0f };
 
 				// set color
