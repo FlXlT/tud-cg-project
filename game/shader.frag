@@ -3,10 +3,11 @@
 // Global variables for lighting calculations
 layout(location = 2) uniform vec3 viewPos;
 layout(location = 3) uniform sampler2D texShadow;
-layout(location = 4) uniform float time;
+layout(location = 4) uniform sampler2D texMaterial;
+layout(location = 5) uniform float time;
 
-layout(location = 5) uniform mat4 lightMVP;
-layout(location = 6) uniform vec3 lightPos = vec3(0, 0, 4);
+layout(location = 6) uniform mat4 lightMVP;
+layout(location = 7) uniform vec3 lightPos = vec3(0, 0, 4);
 
 // Output for on-screen color
 layout(location = 0) out vec4 outColor;
@@ -15,7 +16,7 @@ layout(location = 0) out vec4 outColor;
 in vec3 fragPos;    // World-space position
 in vec3 fragNormal; // World-space normal
 in vec3 fragColor;
-in vec2 texCoords;
+in vec2 fragTexCoords;
 
 void main() {
 
@@ -70,8 +71,12 @@ void main() {
 	//vec3 lightPosVariance = vec3(sin(time)*3, 3.0, cos(time)*3);
 	vec3 lightDir = normalize(lightPos - fragPos);
 
+	// Material texture color value
+	vec3 materialColor = vec3(texture(texMaterial, fragTexCoords));
+
 	// Diffuse shading
-	vec3 Kd = fragColor;
+	vec3 Kd = fragColor * materialColor;
+
 	const float diffuseFactor = dot(lightDir, fragNormal);
 	vec3 diffuse = Kd * diffuseFactor;
 	diffuse = clamp(diffuse, vec3(0, 0, 0), vec3(1.0, 1.0, 1.0));

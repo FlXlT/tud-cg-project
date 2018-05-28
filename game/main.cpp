@@ -389,6 +389,13 @@ int main() {
 		glBindTexture(GL_TEXTURE_2D, texShadow);
 		glUniform1i(glGetUniformLocation(mainProgram, "texShadow"), texture_unit);
 
+		// Bind the material map map to texture slot 1
+		texture_unit = 1;
+
+		glActiveTexture(GL_TEXTURE0 + texture_unit);
+		glBindTexture(GL_TEXTURE_2D, texLight);
+		glUniform1i(glGetUniformLocation(mainProgram, "texMaterial"), texture_unit);
+
 		GLint modelLoc = glGetUniformLocation(mainProgram, "model");
 
 		// Set viewport size

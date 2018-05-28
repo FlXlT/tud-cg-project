@@ -21,26 +21,26 @@ void GeometricObject::generate() {
 		// Retrieve coordinates for vertex by index
 		if (i == 0 || i == 3) {
 			vertex.pos = { -width, -height, 0.0f};
+			vertex.texCoords = { 0.0f, 0.0f };
 		}
 		if (i == 1) {
 			vertex.pos = { width, -height, 0.0f };
+			vertex.texCoords = { 1.0f, 0.0f };
 		}
 		if (i == 2 || i == 4) {
 			vertex.pos = { width, height, 0.0f };
+			vertex.texCoords = { 1.0f, 1.0f };
 		}
 		if (i == 5) {
 			vertex.pos = { -width, height, 0.0f };
+			vertex.texCoords = { 0.0f, 1.0f };
 		}
-		
 
 		// Retrieve components of normal by index
 		vertex.normal = { 0.0f, 0.0f, 1.0f };
 
 		// Set color (white by default)
 		vertex.color = { 0.2588f, 0.525f, 0.9569f };
-
-		// Set texture coordinates
-		vertex.texCoords = { 0.0f, 0.0f };
 
 		vertices.push_back(vertex);
 	}
