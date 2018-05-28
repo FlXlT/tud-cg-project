@@ -37,4 +37,7 @@ void main() {
 	// Alternative that did not yield the proper result
 	// (Interesting effect though, uncomment for some fun)
 	//fragNormal = normalize(vec3(model * vec4(normal.xyz, 1)));
+
+	fragColor = color;
+	fragTexCoords = texCoords;
 }

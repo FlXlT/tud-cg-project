@@ -72,7 +72,6 @@ void main() {
 
 	// Diffuse shading
 	vec3 Kd = fragColor;
-	Kd = vec3(1.0f, 1.0f, 1.0f);
 	const float diffuseFactor = dot(lightDir, fragNormal);
 	vec3 diffuse = Kd * diffuseFactor;
 	diffuse = clamp(diffuse, vec3(0, 0, 0), vec3(1.0, 1.0, 1.0));
