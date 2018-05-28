@@ -4,10 +4,11 @@
 layout(location = 2) uniform vec3 viewPos;
 layout(location = 3) uniform sampler2D texShadow;
 layout(location = 4) uniform sampler2D texMaterial;
-layout(location = 5) uniform float time;
+layout(location = 5) uniform bool useTexMaterial;
+layout(location = 6) uniform float time;
 
-layout(location = 6) uniform mat4 lightMVP;
-layout(location = 7) uniform vec3 lightPos = vec3(0, 0, 4);
+layout(location = 7) uniform mat4 lightMVP;
+layout(location = 8) uniform vec3 lightPos = vec3(0, 0, 4);
 
 // Output for on-screen color
 layout(location = 0) out vec4 outColor;
@@ -72,7 +73,12 @@ void main() {
 	vec3 lightDir = normalize(lightPos - fragPos);
 
 	// Material texture color value
-	vec3 materialColor = vec3(texture(texMaterial, fragTexCoords));
+	vec3 materialColor;
+	if (useTexMaterial) {
+		materialColor = vec3(texture(texMaterial, fragTexCoords));
+	} else {
+		materialColor = vec3(1.0f, 1.0f, 1.0f);
+	}
 
 	// Diffuse shading
 	vec3 Kd = fragColor * materialColor;
