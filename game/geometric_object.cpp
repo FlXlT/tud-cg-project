@@ -94,43 +94,37 @@ void GeometricObject::generate() {
 		for (int vy = 0; vy < nbVertsY; vy++) {
 			int v = vx + vy * (nbVertsX);
 
-			glm::vec3 pos = positions[v];
+			glm::vec3 a = positions[v];
 			glm::vec3 norm = glm::vec3(0.0f, 0.0f, 0.0f);
 
-			std::vector<int> neighbourIndices;
-			if (vx > minX) {
-				neighbourIndices.push_back(v - dx);
+			bool left = vx > minX;
+			bool right = vx < maxX;
+			bool top = vy < maxY;
+			bool bottom = vy > minY;
+
+			std::vector<glm::vec2> triangleIndices;
+
+			if (left && top) {
+				triangleIndices.push_back(glm::vec2(v + dy, v + dy - dx));
 			}
-			if (vx < maxX) {
-				neighbourIndices.push_back(v + dx);
+			if (right && top) {
+				triangleIndices.push_back(glm::vec2(v + dx + dy, v + dy));
+				triangleIndices.push_back(glm::vec2(v + dx, v + dx + dy));
 			}
-			if (vy > minY) {
-				neighbourIndices.push_back(v - dy);
+			if (right && bottom) {
+				triangleIndices.push_back(glm::vec2(v - dy, v + dx));
 			}
-			if (vy < maxY) {
-				neighbourIndices.push_back(v + dy);
-			}
-			if (vx > minX && vy > minY) {
-				neighbourIndices.push_back(v - dx - dy);
-			}
-			if (vx < maxX && vy < maxY) {
-				neighbourIndices.push_back(v + dx + dy);
-			}
-			if (vx > minX && vy < maxY) {
-				//neighbourIndices.push_back(v - dx + dy);
-			}
-			if (vx < maxX && vy > minY) {
-				//neighbourIndices.push_back(v + dx - dy);
+			if (left && bottom) {
+				triangleIndices.push_back(glm::vec2(v - dx - dy, v - dy));
+				triangleIndices.push_back(glm::vec2(v - dx, v - dx - dy));
 			}
 
-			for (int i = 0; i < neighbourIndices.size(); i++) {
-				norm += pos - positions[i];
+			for (int i = 0; i < triangleIndices.size(); i++) {
+				glm::vec3 b = positions[triangleIndices[i][0]];
+				glm::vec3 c = positions[triangleIndices[i][1]];
+				norm += dot(b - a, c - a);
 			}
 			normalize(norm);
-			// dirty trick to make sure all norms are on the right side of the surface
-			if (norm.z < 0) {
-				norm = glm::vec3(-1) * norm;
-			}
 
 			normals[v] = norm;
 		}
