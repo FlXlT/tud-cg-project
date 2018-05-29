@@ -20,7 +20,6 @@ void Weapon::updateGeometry() {
 	body.rotateX(angleY);
 	body.scale(size);	
 
-
 	laserOOB = laserBeam.updateGeometry();
 	//if (laserOOB == -1) {
 	//	//laserBeam = NULL;
@@ -30,9 +29,13 @@ void Weapon::updateGeometry() {
 void Weapon::shootLaser() {
 	laserBeam.attachToWeapon(this);
 	laserBeam.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	laserBeam.buildGeometry();
+
+	updateGeometry();
+
 	laserBeam.targetSpeed.x = 0.05;
 	laserBeam.targetSpeed.y = 0.05;
-	laserBeam.buildGeometry();
+	laserBeam.update();
 }
 
 std::vector<GeometricObject*> Weapon::getGeometry() {
