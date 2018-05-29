@@ -172,7 +172,7 @@ void GeometricObject::generate() {
 			glm::vec3 normal = normalFaces + normalCentroid;
 			normalize(normal);
 
-			normals[v] = normalFaces;
+			normals[v] = normalCentroid;
 		}
 	}
 
