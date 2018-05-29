@@ -13,7 +13,11 @@ void Scene::build() {
 		objects.push_back(geometry[i]);
 	}
 
+	surface.diffuseColor = { 133.0f / 255.0f, 104.0f / 255.0f, 238.0f / 255.0f };
 	surface.generate();
+	surface.specularColor = { 0, 0, 0 };
+	surface.specularIntensity = 0;
+	surface.useTex = false;
 	objects.push_back(&surface);
 }
 

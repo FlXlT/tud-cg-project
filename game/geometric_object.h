@@ -46,6 +46,11 @@ public:
 
 	glm::vec3 position;
 
+	glm::vec3 diffuseColor = glm::vec3(1.0f);
+	glm::vec3 specularColor = glm::vec3(1.0f);
+	float specularIntensity = 64;
+	bool useTex = false;
+
 	GLuint vbo;
 	GLuint vao;
 

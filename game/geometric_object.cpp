@@ -172,7 +172,7 @@ void GeometricObject::generate() {
 			glm::vec3 normal = normalFaces + normalCentroid;
 			normalize(normal);
 
-			normals[v] = normal;
+			normals[v] = normalFaces;
 		}
 	}
 
@@ -226,7 +226,7 @@ void GeometricObject::generate() {
 				vertex.normal = normals[v];
 
 				// set color
-				vertex.color = { 133.0f / 255.0f, 104.0f / 255.0f, 238.0f / 255.0f };
+				vertex.color = diffuseColor;
 
 				vertices.push_back(vertex);
 			}
@@ -262,7 +262,7 @@ void GeometricObject::loadFromFile(const char* filename) {
 			};
 
 			// Set color (white by default)
-			vertex.color = { 1.0f, 1.0f, 1.0f };
+			vertex.color = diffuseColor;
 
 			// Set texture coordinates
 			vertex.texCoords = { 0.0f, 0.0f };

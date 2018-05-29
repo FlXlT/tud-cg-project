@@ -10,6 +10,9 @@ layout(location = 6) uniform float time;
 layout(location = 7) uniform mat4 lightMVP;
 layout(location = 8) uniform vec3 lightPos = vec3(0, 0, 4);
 
+layout(location = 9) uniform vec3 specularColor = vec3(1.0f, 1.0f, 1.0f);
+layout(location = 10) uniform float specularIntensity = 64;
+
 // Output for on-screen color
 layout(location = 0) out vec4 outColor;
 
@@ -29,9 +32,6 @@ void main() {
 	float sampleSize = 0.0002;
 	float bias = 0.001;
 	float visibility_factor = 0.2;
-
-	// Shading Variables
-	float shininess = 64;
 	
 	vec4 fragLightCoord = lightMVP * vec4(fragPos, 1.0);
 
@@ -95,8 +95,8 @@ void main() {
 		vec3 L = lightDir - fragPos;
 		vec3 V = viewPos - fragPos;
 		vec3 H = (L + V) / length(L + V);
-		vec3 Ks = vec3(1.0, 1.0, 1.0);
-		float specularFactor = pow(dot(fragNormal, H), shininess);
+		vec3 Ks = specularColor;
+		float specularFactor = pow(dot(fragNormal, H), specularIntensity);
 		specular = Ks * specularFactor;
 	} else {
 		specular = vec3(0,0,0);

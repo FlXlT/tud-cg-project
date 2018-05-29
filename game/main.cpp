@@ -429,7 +429,9 @@ int main() {
 			glBindVertexArray(obj.vao);
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp * *obj.getModelMatrix()));
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
-			glUniform1i(glGetUniformLocation(mainProgram, "useTexMaterial"), true);
+			glUniform3fv(glGetUniformLocation(mainProgram, "specularColor"), 1, glm::value_ptr(obj.specularColor));
+			glUniform1f(glGetUniformLocation(mainProgram, "specularIntensity"), obj.specularIntensity);
+			glUniform1i(glGetUniformLocation(mainProgram, "useTexMaterial"), obj.useTex);
 			glDrawArrays(GL_TRIANGLES, 0, obj.size());
 		}
 
