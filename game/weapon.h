@@ -18,4 +18,6 @@ public:
 	void updateGeometry();
 	std::vector<GeometricObject*> getGeometry();
 	void Weapon::detachLaser();
+
+	static float computeAngle(float diffY, float diffX);
 };

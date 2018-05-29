@@ -1,4 +1,6 @@
 #include "weapon.h"
+#define _USE_MATH_DEFINES
+#include "math.h"
 
 void Weapon::attachToSpaceship(GameObject* s) {
 	spaceship = s;
@@ -50,4 +52,18 @@ std::vector<GeometricObject*> Weapon::getGeometry() {
 	geometry.insert(geometry.end(), g.begin(), g.end());
 
 	return geometry;
+}
+
+float Weapon::computeAngle(float diffX, float diffY) {
+	float rotation = 0;
+	if (diffY <= 0 && diffX > 0) {
+		rotation = -0.5 * M_PI;
+	}
+	else if (diffY <= 0 && diffX < 0) {
+		rotation = 0.5 * M_PI;
+	}
+	else {
+		rotation = -1 * atan(diffX / diffY);
+	}
+	return rotation;
 }

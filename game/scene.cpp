@@ -17,7 +17,7 @@ void Scene::build() {
 	surface.generate();
 	surface.specularColor = { 0, 0, 0 };
 	surface.specularIntensity = 0;
-	surface.useTex = false;
+	surface.useTex = true;
 	objects.push_back(&surface);
 }
 
@@ -29,19 +29,19 @@ void Scene::generateBufferObjects() {
 
 void Scene::handleKey(int key, int action) {
 	switch (key) {
-	case GLFW_KEY_LEFT:
+	case GLFW_KEY_A:
 		if (action == GLFW_PRESS)   spaceship.targetSpeed.x = -0.05;
 		if (action == GLFW_RELEASE) spaceship.targetSpeed.x = 0.0;
 		break;
-	case GLFW_KEY_RIGHT:
+	case GLFW_KEY_D:
 		if (action == GLFW_PRESS)   spaceship.targetSpeed.x = 0.05;
 		if (action == GLFW_RELEASE) spaceship.targetSpeed.x = 0.0;
 		break;
-	case GLFW_KEY_UP:
+	case GLFW_KEY_W:
 		if (action == GLFW_PRESS)   spaceship.targetSpeed.y = 0.05;
 		if (action == GLFW_RELEASE) spaceship.targetSpeed.y = 0.0;
 		break;
-	case GLFW_KEY_DOWN:
+	case GLFW_KEY_S:
 		if (action == GLFW_PRESS)   spaceship.targetSpeed.y = -0.05;
 		if (action == GLFW_RELEASE) spaceship.targetSpeed.y = 0.0;
 		break;
@@ -64,3 +64,4 @@ void Scene::update() {
 	spaceship.update();
 	spaceship.updateGeometry();
 }
+

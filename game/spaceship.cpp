@@ -8,11 +8,11 @@ void Spaceship::buildGeometry() {
 	body.loadFromFile("spaceship.obj");
 
 	weaponLeft.attachToSpaceship(this);
-	weaponLeft.position = glm::vec3(-0.25f, 0.875f, -0.075f);
+	weaponLeft.position = glm::vec3(-0.25f, 0.875f, -0.125f);
 	weaponLeft.buildGeometry();
 
 	weaponRight.attachToSpaceship(this);
-	weaponRight.position = glm::vec3(0.25f, 0.875f, -0.075f);
+	weaponRight.position = glm::vec3(0.25f, 0.875f, -0.125f);
 	weaponRight.buildGeometry();
 
 	updateGeometry();
@@ -56,5 +56,53 @@ std::vector<GeometricObject*> Spaceship::getGeometry() {
 void Spaceship::shootLaser() {
 	weaponLeft.shootLaser();
 	weaponRight.shootLaser();
+}
+
+bool Spaceship::collidesLeft() {
+	if (position.x <= -2.5f) {
+		return true;
+	}
+	return false;
+}
+
+bool Spaceship::collidesRight() {
+	if (position.x >= 2.5f) {
+		return true;
+	}
+	return false;
+}
+
+bool Spaceship::collidesUp() {
+	if (position.y >= 1.65f) {
+		return true;
+	}
+	return false;
+}
+
+bool Spaceship::collidesDown() {
+	if (position.y <= -2.0f) {
+		return true;
+	}
+	return false;
+}
+
+// Overrides GameObject::update() because of spaceship specific check.
+void Spaceship::update() {
+	if (targetSpeed.x < 0.0 && collidesLeft() || targetSpeed.x > 0.0 && collidesRight()) {
+		speed.x = 0;
+	} else {
+		speed.x += (targetSpeed.x - speed.x) / 10;
+	}
+
+	if (targetSpeed.y < 0.0 && collidesDown() || targetSpeed.y > 0.0 && collidesUp()) {
+		speed.y = 0;
+	}
+	else {
+		speed.y += (targetSpeed.y - speed.y) / 10;
+	}
+
+	speed.z += (targetSpeed.z - speed.z) / 10;
+
+	move(speed);
 }
 
