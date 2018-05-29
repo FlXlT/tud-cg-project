@@ -95,12 +95,15 @@ void GeometricObject::generate() {
 			int v = vx + vy * (nbVertsX);
 
 			glm::vec3 a = positions[v];
-			glm::vec3 norm = glm::vec3(0.0f, 0.0f, 0.0f);
 
 			bool left = vx > minX;
 			bool right = vx < maxX;
 			bool top = vy < maxY;
 			bool bottom = vy > minY;
+
+			// Face normal interpolation
+
+			glm::vec3 normalFaces = glm::vec3(0.0f, 0.0f, 0.0f);
 
 			std::vector<glm::vec2> triangleIndices;
 
@@ -122,11 +125,54 @@ void GeometricObject::generate() {
 			for (int i = 0; i < triangleIndices.size(); i++) {
 				glm::vec3 b = positions[triangleIndices[i][0]];
 				glm::vec3 c = positions[triangleIndices[i][1]];
-				norm += dot(b - a, c - a);
+				normalFaces += dot(b - a, c - a);
 			}
-			normalize(norm);
+			normalize(normalFaces);
 
-			normals[v] = norm;
+			// Centroid normal interpolation
+
+			glm::vec3 normalCentroid = glm::vec3(0.0f, 0.0f, 0.0f);
+
+			std::vector<int> neighbourIndices;
+
+			if (vx > minX) {
+				neighbourIndices.push_back(v - dx);
+			}
+			if (vx < maxX) {
+				neighbourIndices.push_back(v + dx);
+			}
+			if (vy > minY) {
+				neighbourIndices.push_back(v - dy);
+			}
+			if (vy < maxY) {
+				neighbourIndices.push_back(v + dy);
+			}
+			if (vx > minX && vy > minY) {
+				neighbourIndices.push_back(v - dx - dy);
+			}
+			if (vx < maxX && vy < maxY) {
+				neighbourIndices.push_back(v + dx + dy);
+			}
+			if (vx > minX && vy < maxY) {
+				//neighbourIndices.push_back(v - dx + dy);
+			}
+			if (vx < maxX && vy > minY) {
+				//neighbourIndices.push_back(v + dx - dy);
+			}
+
+			for (int i = 0; i < neighbourIndices.size(); i++) {
+				normalCentroid += a - positions[neighbourIndices[i]];
+			}
+			normalize(normalCentroid);
+			// dirty trick to make sure all normals are on the right side of the surface
+			if (normalCentroid.z < 0) {
+				normalCentroid = glm::vec3(-1) * normalCentroid;
+			}
+
+			glm::vec3 normal = normalFaces + normalCentroid;
+			normalize(normal);
+
+			normals[v] = normal;
 		}
 	}
 
