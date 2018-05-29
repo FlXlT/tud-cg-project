@@ -323,6 +323,9 @@ int main() {
 	// The other cameras are mainly for shadow mapping
 	mainCamera = firstCamera;
 
+	glm::mat4 mvp = mainCamera.vpMatrix();
+	std::cout << glm::to_string(mvp) << std::endl;
+
 	// Main loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -410,6 +413,7 @@ int main() {
 
 			if (i == 0) {
 				screenposSpaceship = mvp * glm::vec4(obj.position, 1.0);
+				//std::cout << glm::to_string(obj.position) << std::endl;
 			}
 			if (i == 1) {
 				screenposWeaponLeft = mvp * glm::vec4(obj.position, 1.0);

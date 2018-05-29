@@ -16,4 +16,11 @@ public:
 	void buildGeometry();
 	void updateGeometry();
 	std::vector<GeometricObject*> getGeometry();
+
+	bool collidesLeft();
+	bool collidesRight();
+	bool collidesUp();
+	bool collidesDown();
+
+	void update();
 };
