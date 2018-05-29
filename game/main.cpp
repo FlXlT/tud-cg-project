@@ -30,6 +30,7 @@
 #include <sstream>
 #include <vector>
 
+#define _USE_MATH_DEFINES
 #include <math.h>
 
 #include "vertex.h"
@@ -148,6 +149,7 @@ void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 	mouseYcoord = (float) ((ypos*10)/(HEIGHT)) - 5;
 	//camCursorPosHandler(xpos, ypos);
 }
+
 
 int main() {
 	scene.build();
@@ -410,22 +412,26 @@ int main() {
 
 			if (i == 0) {
 				screenposSpaceship = mvp * glm::vec4(obj.position, 1.0);
+				//std::cout << "realPos: " << glm::to_string(obj.position) << std::endl;
 			}
 			if (i == 1) {
 				screenposWeaponLeft = mvp * glm::vec4(obj.position, 1.0);
 				screenposWeaponLeft = screenposWeaponLeft + screenposSpaceship;
-				float diffX = screenposWeaponLeft[0] - mouseXcoord;
-				float diffY = screenposWeaponLeft[1] - mouseYcoord;
-				float rotation = -1*atan(diffX / diffY);
-				obj.rotateY(rotation);
+				float diffX = screenposWeaponLeft.x - mouseXcoord;
+				float diffY = -(screenposWeaponLeft.y - 1.629f) - mouseYcoord;
+
+				// Clamp weapons if aiming down
+				obj.rotateY(Weapon::computeAngle(diffX, diffY));
+				
 			}
 			if (i == 2) {
 				screenposWeaponRight = mvp * glm::vec4(obj.position, 1.0);
 				screenposWeaponRight = screenposWeaponRight + screenposSpaceship;
-				float diffX = screenposWeaponRight[0] - mouseXcoord;
-				float diffY = screenposWeaponRight[1] - mouseYcoord;
-				float rotation = -1 * atan(diffX / diffY);
-				obj.rotateY(rotation);
+				float diffX = screenposWeaponRight.x - mouseXcoord;
+				float diffY = -(screenposWeaponRight.y - 1.629f) - mouseYcoord;
+
+				// Clamp weapons if aiming down
+				obj.rotateY(Weapon::computeAngle(diffX, diffY));
 			}
 
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp * *obj.getModelMatrix()));
