@@ -8,11 +8,11 @@ void Spaceship::buildGeometry() {
 	body.loadFromFile("spaceship.obj");
 
 	weaponLeft.attachToSpaceship(this);
-	weaponLeft.position = glm::vec3(-0.25f, 0.875f, -0.075f);
+	weaponLeft.position = glm::vec3(-0.25f, 0.875f, -0.125f);
 	weaponLeft.buildGeometry();
 
 	weaponRight.attachToSpaceship(this);
-	weaponRight.position = glm::vec3(0.25f, 0.875f, -0.075f);
+	weaponRight.position = glm::vec3(0.25f, 0.875f, -0.125f);
 	weaponRight.buildGeometry();
 
 	updateGeometry();
