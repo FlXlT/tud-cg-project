@@ -6,6 +6,9 @@
 // Library for window creation and event handling
 #include <GLFW/glfw3.h>
 
+// to transform vec4 and vec3 into strings
+#include "glm/ext.hpp"
+
 // Library for vertex and matrix math
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -38,9 +41,13 @@
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
-float weaponRot = 0.0;
-float weaponLeftRot = 0.0;
-float weaponRightRot = 0.0;
+float mouseXcoord = 0;
+float mouseYcoord = 0;
+
+glm::vec4 screenposSpaceship;
+glm::vec4 screenposWeaponLeft;
+glm::vec4 screenposWeaponRight;
+
 
 // Scene
 Scene scene;
@@ -137,9 +144,8 @@ void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
-	weaponRot = (float) atan((xpos - WIDTH/2) / (ypos - HEIGHT/2));
-	weaponRightRot = (float)-1*atan((xpos - (WIDTH  / 2 + WIDTH * 0.075)) / (ypos - HEIGHT / 2));
-	weaponLeftRot = (float)-1*atan((xpos - (WIDTH / 2 - WIDTH * 0.075)) / (ypos - HEIGHT / 2));
+	mouseXcoord = (float) ((xpos*10)/(WIDTH)) - 5;
+	mouseYcoord = (float) ((ypos*10)/(HEIGHT)) - 5;
 	//camCursorPosHandler(xpos, ypos);
 }
 
@@ -269,10 +275,8 @@ int main() {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-
 	scene.generateBufferObjects();
 
-	
 	//////////////////// Create Shadow Texture
 	GLuint texShadow;
 	const int SHADOWTEX_WIDTH  = 1024;
@@ -339,19 +343,10 @@ int main() {
 			glUseProgram(shadowProgram); // Bind the shader
 			glViewport(0, 0, SHADOWTEX_WIDTH, SHADOWTEX_HEIGHT); // Set viewport size
 
-			// Execute draw command
-			/*glDrawArrays(GL_TRIANGLES, 0, vertices.size());*/
-
-			// .... HERE YOU MUST ADD THE CORRECT UNIFORMS FOR RENDERING THE SHADOW MAP
-
 			//// Set uniforms in fragment shader
 			// Set projection matrix
 			glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP));
-
-			// Set view position
 			glUniform3fv(glGetUniformLocation(shadowProgram, "viewPos"), 1, glm::value_ptr(secondCamera.position));
-
-			// Expose current time in shader uniform
 			glUniform1f(glGetUniformLocation(shadowProgram, "time"), static_cast<float>(glfwGetTime()));
 
 			// Render objects
@@ -380,9 +375,6 @@ int main() {
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "lightMVP"), 1, GL_FALSE, glm::value_ptr(lightMVP));
 		glUniform3fv(glGetUniformLocation(mainProgram, "lightPos"), 1, glm::value_ptr(secondCamera.position));
 
-		// Bind vertex data
-		//glBindVertexArray(vao);
-
 		// Bind the shadow map to texture slot 0
 		GLint texture_unit = 0;
 
@@ -409,29 +401,40 @@ int main() {
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
 
-		//scene.spaceship.barrelRollAngle = -weaponLeftRot;
 		scene.update();
-		//scene.spaceship.loadModelMatrix();
-		//scene.spaceship.rotateZ(-weaponLeftRot);
-		//scene.spaceship.applyPosition();
-
-		/*scene.weaponLeft.loadModelMatrix();
-		scene.weaponLeft.rotateY(weaponLeftRot);
-		scene.weaponLeft.applyPosition();
-
-		scene.weaponRight.loadModelMatrix();
-		scene.weaponRight.rotateY(weaponRightRot);
-		scene.weaponRight.applyPosition();*/
 
 		// Render objects
 		for (int i = 0; i < scene.objects.size(); i++) {
 			GeometricObject obj = *scene.objects[i];
 			glBindVertexArray(obj.vao);
+
+			if (i == 0) {
+				screenposSpaceship = mvp * glm::vec4(obj.position, 1.0);
+			}
+			if (i == 1) {
+				screenposWeaponLeft = mvp * glm::vec4(obj.position, 1.0);
+				screenposWeaponLeft = screenposWeaponLeft + screenposSpaceship;
+				float diffX = screenposWeaponLeft[0] - mouseXcoord;
+				float diffY = screenposWeaponLeft[1] - mouseYcoord;
+				float rotation = -1*atan(diffX / diffY);
+				obj.rotateY(rotation);
+			}
+			if (i == 2) {
+				screenposWeaponRight = mvp * glm::vec4(obj.position, 1.0);
+				screenposWeaponRight = screenposWeaponRight + screenposSpaceship;
+				float diffX = screenposWeaponRight[0] - mouseXcoord;
+				float diffY = screenposWeaponRight[1] - mouseYcoord;
+				float rotation = -1 * atan(diffX / diffY);
+				obj.rotateY(rotation);
+			}
+
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp * *obj.getModelMatrix()));
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
 			glUniform3fv(glGetUniformLocation(mainProgram, "specularColor"), 1, glm::value_ptr(obj.specularColor));
 			glUniform1f(glGetUniformLocation(mainProgram, "specularIntensity"), obj.specularIntensity);
 			glUniform1i(glGetUniformLocation(mainProgram, "useTexMaterial"), obj.useTex);
+
+		
 			glDrawArrays(GL_TRIANGLES, 0, obj.size());
 		}
 
