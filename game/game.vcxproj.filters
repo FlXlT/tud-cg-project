@@ -10,6 +10,15 @@
     <ClCompile Include="scene.cpp">
       <Filter>source</Filter>
     </ClCompile>
+    <ClCompile Include="game_object.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="spaceship.cpp">
+      <Filter>source\game_objects</Filter>
+    </ClCompile>
+    <ClCompile Include="weapon.cpp">
+      <Filter>source\game_objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -38,6 +47,15 @@
     <ClInclude Include="scene.h">
       <Filter>source</Filter>
     </ClInclude>
+    <ClInclude Include="game_object.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="spaceship.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
+    <ClInclude Include="weapon.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">
@@ -45,6 +63,9 @@
     </Filter>
     <Filter Include="source">
       <UniqueIdentifier>{be88a58c-b129-43b1-adaf-ac2b9f560829}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\game_objects">
+      <UniqueIdentifier>{ea956660-15b6-4bd8-a4df-cb16c6aa2f86}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

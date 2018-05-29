@@ -1,40 +1,54 @@
 #include "scene.h"
 
+// for event handling
+#include <GLFW/glfw3.h>
+
 void Scene::build() {
-	float angleX = -90 * atan(1) * 4 / 180;
+	float angleX = 90 * atan(1) * 4 / 180;
 	float angleY = 180 * atan(1) * 4 / 180;
 
-	GeometricObject s;
-	spaceship = s;
-	spaceship.loadFromFile("spaceship.obj");
-	spaceship.translate(glm::vec3(0.0f, -0.5f, 0.0f));
-	spaceship.scale(glm::vec3(0.5f, 0.5f, 0.5f));
-	spaceship.rotateX(angleX);
-	spaceship.rotateY(angleY);
-	spaceship.pushModelMatrix();
-	objects.push_back(&spaceship);
+	spaceship.buildGeometry();
+	std::vector<GeometricObject*> geometry = spaceship.getGeometry();
+	for (int i = 0; i < geometry.size(); i++) {
+		objects.push_back(geometry[i]);
+	}
 
-	GeometricObject wl;
-	weaponLeft = wl;
-	weaponLeft.loadFromFile("SingleWeapon.obj");
-	weaponLeft.translate(glm::vec3(-0.125f, -0.42f, 0.0f));
-	weaponLeft.scale(glm::vec3(0.05f, 0.05f, 0.05f));
-	weaponLeft.rotateX(angleX);
-	weaponLeft.pushModelMatrix();
-	objects.push_back(&weaponLeft);
-
-	GeometricObject wr;
-	weaponRight = wr;
-	weaponRight.loadFromFile("SingleWeapon.obj");
-	weaponRight.translate(glm::vec3(0.125f, -0.42f, 0.0f));
-	weaponRight.scale(glm::vec3(0.05f, 0.05f, 0.05f));
-	weaponRight.rotateX(angleX);
-	weaponRight.pushModelMatrix();
-	objects.push_back(&weaponRight);
+	surface.diffuseColor = { 133.0f / 255.0f, 104.0f / 255.0f, 238.0f / 255.0f };
+	surface.generate();
+	surface.specularColor = { 0, 0, 0 };
+	surface.specularIntensity = 0;
+	surface.useTex = false;
+	objects.push_back(&surface);
 }
 
 void Scene::generateBufferObjects() {
 	for (int i = 0; i < objects.size(); i++) {
 		(*objects[i]).generateBufferObjects();
 	}
+}
+
+void Scene::handleKey(int key, int action) {
+	switch (key) {
+	case GLFW_KEY_LEFT:
+		if (action == GLFW_PRESS)   spaceship.targetSpeed.x = -0.05;
+		if (action == GLFW_RELEASE) spaceship.targetSpeed.x = 0.0;
+		break;
+	case GLFW_KEY_RIGHT:
+		if (action == GLFW_PRESS)   spaceship.targetSpeed.x = 0.05;
+		if (action == GLFW_RELEASE) spaceship.targetSpeed.x = 0.0;
+		break;
+	case GLFW_KEY_UP:
+		if (action == GLFW_PRESS)   spaceship.targetSpeed.y = 0.05;
+		if (action == GLFW_RELEASE) spaceship.targetSpeed.y = 0.0;
+		break;
+	case GLFW_KEY_DOWN:
+		if (action == GLFW_PRESS)   spaceship.targetSpeed.y = -0.05;
+		if (action == GLFW_RELEASE) spaceship.targetSpeed.y = 0.0;
+		break;
+	}
+}
+
+void Scene::update() {
+	spaceship.update();
+	spaceship.updateGeometry();
 }

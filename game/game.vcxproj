@@ -11,9 +11,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="game_object.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="geometric_object.cpp" />
     <ClCompile Include="scene.cpp" />
+    <ClCompile Include="spaceship.cpp" />
+    <ClCompile Include="weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag" />
@@ -23,9 +26,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="game_object.h" />
     <ClInclude Include="geometric_object.h" />
     <ClInclude Include="scene.h" />
+    <ClInclude Include="spaceship.h" />
     <ClInclude Include="vertex.h" />
+    <ClInclude Include="weapon.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{284FE360-BC5E-4387-A182-8332F748CC9B}</ProjectGuid>

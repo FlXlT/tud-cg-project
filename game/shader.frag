@@ -1,12 +1,17 @@
 #version 430
 
 // Global variables for lighting calculations
-layout(location = 1) uniform vec3 viewPos;
-layout(location = 2) uniform sampler2D texShadow;
-layout(location = 3) uniform float time;
+layout(location = 2) uniform vec3 viewPos;
+layout(location = 3) uniform sampler2D texShadow;
+layout(location = 4) uniform sampler2D texMaterial;
+layout(location = 5) uniform bool useTexMaterial;
+layout(location = 6) uniform float time;
 
-layout(location = 4) uniform mat4 lightMVP;
-layout(location = 5) uniform vec3 lightPos = vec3(3,3,3);
+layout(location = 7) uniform mat4 lightMVP;
+layout(location = 8) uniform vec3 lightPos = vec3(0, 0, 4);
+
+layout(location = 9) uniform vec3 specularColor = vec3(1.0f, 1.0f, 1.0f);
+layout(location = 10) uniform float specularIntensity = 64;
 
 // Output for on-screen color
 layout(location = 0) out vec4 outColor;
@@ -14,6 +19,8 @@ layout(location = 0) out vec4 outColor;
 // Interpolated output data from vertex shader
 in vec3 fragPos;    // World-space position
 in vec3 fragNormal; // World-space normal
+in vec3 fragColor;
+in vec2 fragTexCoords;
 
 void main() {
 
@@ -25,9 +32,6 @@ void main() {
 	float sampleSize = 0.0002;
 	float bias = 0.001;
 	float visibility_factor = 0.2;
-
-	// Shading Variables
-	float shininess = 64;
 	
 	vec4 fragLightCoord = lightMVP * vec4(fragPos, 1.0);
 
@@ -68,8 +72,17 @@ void main() {
 	//vec3 lightPosVariance = vec3(sin(time)*3, 3.0, cos(time)*3);
 	vec3 lightDir = normalize(lightPos - fragPos);
 
+	// Material texture color value
+	vec3 materialColor;
+	if (useTexMaterial) {
+		materialColor = vec3(texture(texMaterial, fragTexCoords));
+	} else {
+		materialColor = vec3(1.0f, 1.0f, 1.0f);
+	}
+
 	// Diffuse shading
-	vec3 Kd = vec3(1.0, 1.0, 1.0);
+	vec3 Kd = fragColor * materialColor;
+
 	const float diffuseFactor = dot(lightDir, fragNormal);
 	vec3 diffuse = Kd * diffuseFactor;
 	diffuse = clamp(diffuse, vec3(0, 0, 0), vec3(1.0, 1.0, 1.0));
@@ -82,12 +95,13 @@ void main() {
 		vec3 L = lightDir - fragPos;
 		vec3 V = viewPos - fragPos;
 		vec3 H = (L + V) / length(L + V);
-		vec3 Ks = vec3(1.0, 1.0, 1.0);
-		float specularFactor = pow(dot(fragNormal, H), shininess);
+		vec3 Ks = specularColor;
+		float specularFactor = pow(dot(fragNormal, H), specularIntensity);
 		specular = Ks * specularFactor;
 	} else {
 		specular = vec3(0,0,0);
 	}
 	
-	outColor =  (sum / iterations) * vec4(diffuse + specular, 1.0);
+	outColor = (sum / iterations) * vec4(diffuse + specular, 1.0);
+	//outColor = vec4(vec3(1, 1, 1), 1.0);
 }

@@ -22,12 +22,16 @@
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+// random number generation
+#include <cstdlib>
+
 class GeometricObject {
 	// List of vertices that constitute the geometric representation of this object
 	std::vector<Vertex> vertices;
 
 	// The model matrix for this object
 	glm::mat4 model;
+	glm::mat4 completeModel;
 	std::vector<glm::mat4> modelStack;
 
 	// Tiny OBJ Loader Related Attributes
@@ -37,17 +41,26 @@ class GeometricObject {
 
 public:
 
+	// Parent geometric object to which this object is "attached"
+	GeometricObject * parent;
+
 	glm::vec3 position;
-	glm::vec3 rotationAxis;
-	float rotationAngle;
-	glm::vec3 scalingFactors;
+
+	glm::vec3 diffuseColor = glm::vec3(1.0f);
+	glm::vec3 specularColor = glm::vec3(1.0f);
+	float specularIntensity = 64;
+	bool useTex = false;
 
 	GLuint vbo;
 	GLuint vao;
 
+	GeometricObject();
+	GeometricObject(GeometricObject* parent);
+
 	void generateBufferObjects();
 
 	void loadFromFile(const char* filename);
+	void generate();
 	std::vector<Vertex>* getVertices();
 	int size();
 	Vertex* data();
@@ -58,6 +71,7 @@ public:
 	void pushModelMatrix();
 	void popModelMatrix();
 	void loadModelMatrix();
+	void applyPosition();
 
 	void translate(glm::vec3 translation);
 	void translateX(float translation);

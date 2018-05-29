@@ -3,6 +3,7 @@
 #include <vector>
 
 #include "geometric_object.h"
+#include "spaceship.h"
 
 class Scene {
 	
@@ -11,10 +12,15 @@ public:
 
 	std::vector<GeometricObject*> objects;
 
-	GeometricObject spaceship;
+	Spaceship spaceship;
 	GeometricObject weaponLeft;
 	GeometricObject weaponRight;
+	GeometricObject surface;
 
 	void build();
 	void generateBufferObjects();
+
+	void handleKey(int key, int action);
+
+	void update();
 };
