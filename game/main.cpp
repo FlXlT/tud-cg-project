@@ -158,7 +158,7 @@ int main() {
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Shadow mapping practical", nullptr, nullptr);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Game", nullptr, nullptr);
 	if (!window) {
 		std::cerr << "Failed to create OpenGL context!" << std::endl;
 		std::cout <<  "Press enter to close."; getchar();
@@ -310,9 +310,9 @@ int main() {
 	/////////////////// Create second camera for shadow mapping
 	Camera secondCamera;
 	secondCamera.aspect = WIDTH / (float)HEIGHT;
-	secondCamera.position = glm::vec3(-1.0f, 1.0f, 5.0f);
+	secondCamera.position = glm::vec3(-1.0f, 1.0f, 10.0f);
 	secondCamera.forward  = -secondCamera.position;
-	secondCamera.up = glm::vec3(0.0f, 1.0f, 0.0f);
+	secondCamera.up = glm::vec3(0.0f, 0.0f, 1.0f);
 	cameras.push_back(secondCamera);
 
 	// Assign the first camera as the main viewport
