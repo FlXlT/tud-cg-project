@@ -52,3 +52,9 @@ std::vector<GeometricObject*> Spaceship::getGeometry() {
 
 	return geometry;
 }
+
+void Spaceship::shootLaser() {
+	weaponLeft.shootLaser();
+	weaponRight.shootLaser();
+}
+

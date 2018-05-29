@@ -48,6 +48,17 @@ void Scene::handleKey(int key, int action) {
 	}
 }
 
+// Mouse button handle function
+void Scene::sceneMouseButtonHandler(int button, int action)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		if (lastTimeShot + 1 < std::time(nullptr)) { // Only possible to shoot one time per second
+			spaceship.shootLaser();
+			lastTimeShot = std::time(nullptr);
+		}
+	}
+}
+
 void Scene::update() {
 	spaceship.update();
 	spaceship.updateGeometry();

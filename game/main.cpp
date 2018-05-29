@@ -48,7 +48,6 @@ glm::vec4 screenposSpaceship;
 glm::vec4 screenposWeaponLeft;
 glm::vec4 screenposWeaponRight;
 
-
 // Scene
 Scene scene;
 
@@ -140,6 +139,7 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 {
 	camMouseButtonHandler(button, action);
+	scene.sceneMouseButtonHandler(button, action);
 }
 
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
@@ -419,7 +419,7 @@ int main() {
 				float rotation = -1*atan(diffX / diffY);
 				obj.rotateY(rotation);
 			}
-			if (i == 2) {
+			if (i == 3) {
 				screenposWeaponRight = mvp * glm::vec4(obj.position, 1.0);
 				screenposWeaponRight = screenposWeaponRight + screenposSpaceship;
 				float diffX = screenposWeaponRight[0] - mouseXcoord;

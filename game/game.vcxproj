@@ -12,6 +12,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="game_object.cpp" />
+    <ClCompile Include="laser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="geometric_object.cpp" />
     <ClCompile Include="scene.cpp" />
@@ -28,6 +29,7 @@
     <ClInclude Include="camera.h" />
     <ClInclude Include="game_object.h" />
     <ClInclude Include="geometric_object.h" />
+    <ClInclude Include="laser.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="spaceship.h" />
     <ClInclude Include="vertex.h" />

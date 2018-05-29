@@ -16,4 +16,5 @@ public:
 	void buildGeometry();
 	void updateGeometry();
 	std::vector<GeometricObject*> getGeometry();
+	void Spaceship::shootLaser();
 };

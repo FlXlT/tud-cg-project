@@ -19,6 +19,9 @@
     <ClCompile Include="weapon.cpp">
       <Filter>source\game_objects</Filter>
     </ClCompile>
+    <ClCompile Include="laser.cpp">
+      <Filter>source\game_objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -54,6 +57,9 @@
       <Filter>source\game_objects</Filter>
     </ClInclude>
     <ClInclude Include="weapon.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
+    <ClInclude Include="laser.h">
       <Filter>source\game_objects</Filter>
     </ClInclude>
   </ItemGroup>
