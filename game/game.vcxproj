@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="enemyspaceship.cpp" />
     <ClCompile Include="game_object.cpp" />
     <ClCompile Include="laser.cpp" />
     <ClCompile Include="main.cpp" />
@@ -28,6 +29,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h" />
+    <ClInclude Include="enemyspaceship.h" />
     <ClInclude Include="game_object.h" />
     <ClInclude Include="geometric_object.h" />
     <ClInclude Include="laser.h" />

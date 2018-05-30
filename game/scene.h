@@ -25,6 +25,7 @@ public:
 	GeometricObject weaponRight;
 	GeometricObject surface;
 	Terrain terrain;
+	
 
 	void build();
 	void generateBufferObjects();
