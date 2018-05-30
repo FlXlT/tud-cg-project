@@ -28,8 +28,8 @@ void main() {
 	bool inShadow = false;
 	float sum = 0.0;
 	float iterations = 0.0;	
-	float sampleArea = 0.001;
-	float sampleSize = 0.0002;
+	float sampleArea = 0.002;
+	float sampleSize = 0.0004;
 	float bias = 0.001;
 	float visibility_factor = 0.2;
 	
