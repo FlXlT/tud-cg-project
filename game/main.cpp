@@ -145,6 +145,7 @@ void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
+	scene.mouseProjection = glm::vec2(((xpos*10) / (WIDTH)) - 5, ((ypos * 10) / (HEIGHT)) - 5);
 	mouseXcoord = (float) ((xpos*3.7)/(WIDTH)) - 1.2;
 	mouseYcoord = (float) ((ypos*5)/(HEIGHT)) - 2.5;
 	//camCursorPosHandler(xpos, ypos);	
@@ -360,7 +361,10 @@ int main() {
 			for (int i = 0; i < geometricObjects.size(); i++) {
 				GeometricObject obj = *geometricObjects[i];
 				glBindVertexArray(obj.vao);
-
+				if (i == 0) {
+					glm::vec4 tempVec = mvp * glm::vec4(obj.position,1.0);
+					scene.spaceshipProjection = glm::vec2(tempVec[0], tempVec[1]);
+				}
 				if (i == 1) {
 					scene.spaceship.weaponLeft.updateAngle(mvp, obj, mouseXcoord, mouseYcoord);
 					obj.rotateY(scene.spaceship.weaponLeft.angle);

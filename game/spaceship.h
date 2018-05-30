@@ -16,7 +16,7 @@ public:
 	void buildGeometry();
 	void updateGeometry();
 	std::vector<GeometricObject*> getGeometry();
-	void Spaceship::shootLaser(float mouseX, float mouseY);
+	void Spaceship::shootLaser(glm::vec2 mouseProjection, glm::vec2 spaceshipProjection);
 
 	bool collidesLeft();
 	bool collidesRight();

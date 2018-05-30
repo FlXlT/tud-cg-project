@@ -25,7 +25,8 @@ public:
 	GeometricObject weaponRight;
 	GeometricObject surface;
 	Terrain terrain;
-	
+	glm::vec2 mouseProjection;
+	glm::vec2 spaceshipProjection;
 
 	void build();
 	void generateBufferObjects();
