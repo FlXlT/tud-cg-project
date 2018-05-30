@@ -8,7 +8,7 @@ void Terrain::buildGeometry() {
 	body.useTex = true;
 	updateGeometry();
 	position.y = 5;
-	targetSpeed.y = -0.05f;
+	targetSpeed.y = -0.02f;
 }
 
 void Terrain::updateGeometry() {

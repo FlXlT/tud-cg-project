@@ -132,6 +132,13 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 	case GLFW_KEY_2:
 		mainCamera = cameras[1];
 		break;
+	case GLFW_KEY_R:
+		if (action == GLFW_PRESS && scene.terrain.targetSpeed.y < 0.0f) {
+			scene.terrain.targetSpeed.y = 0.0f;
+		}
+		else if (action == GLFW_PRESS) {
+			scene.terrain.targetSpeed.y = -0.02f;
+		}
 	default:
 		break;
 	}
@@ -418,7 +425,7 @@ int main() {
 		glEnable(GL_DEPTH_TEST);
 
 		scene.update();
-
+		
 		// Render objects
 		std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
 		for (int i = 0; i < geometricObjects.size(); i++) {
