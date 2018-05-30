@@ -5,8 +5,11 @@
 class Weapon : public GameObject {
 
 	GameObject* spaceship;
+	
 
 public:
+
+	float angle;
 
 	void attachToSpaceship(GameObject* spaceship);
 
@@ -15,4 +18,7 @@ public:
 	std::vector<GeometricObject*> getGeometry();
 
 	static float computeAngle(float diffY, float diffX);
+
+	void updateAngle(GeometricObject obj);
+	void updateAngle(glm::mat4 mvp, GeometricObject obj, float mouseXcoord, float mouseYcoord);
 };

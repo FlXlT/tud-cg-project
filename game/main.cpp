@@ -355,35 +355,18 @@ int main() {
 			glUniform3fv(glGetUniformLocation(shadowProgram, "viewPos"), 1, glm::value_ptr(secondCamera.position));
 			glUniform1f(glGetUniformLocation(shadowProgram, "time"), static_cast<float>(glfwGetTime()));
 
-			
-
 			// Render objects
 			for (int i = 0; i < scene.objects.size(); i++) {
 				GeometricObject obj = *scene.objects[i];
 				glBindVertexArray(obj.vao);
 
-				if (i == 0) {
-					screenposSpaceship = mvp * glm::vec4(obj.position, 1.0);
-				}
 				if (i == 1) {
-					screenposWeaponLeft = mvp * glm::vec4(obj.position, 1.0);
-					screenposWeaponLeft = screenposWeaponLeft + screenposSpaceship;
-					float diffX = screenposWeaponLeft.x - mouseXcoord;
-					float diffY = -(screenposWeaponLeft.y - 1.629f) - mouseYcoord;
-
-					// Clamp weapons if aiming down
-					angleWeaponLeft = Weapon::computeAngle(diffX, diffY);
-					obj.rotateY(angleWeaponLeft);
+					scene.spaceship.weaponLeft.updateAngle(mvp, obj, mouseXcoord, mouseYcoord);
+					obj.rotateY(scene.spaceship.weaponLeft.angle);
 				}
 				if (i == 2) {
-					screenposWeaponRight = mvp * glm::vec4(obj.position, 1.0);
-					screenposWeaponRight = screenposWeaponRight + screenposSpaceship;
-					float diffX = screenposWeaponRight.x - mouseXcoord;
-					float diffY = -(screenposWeaponRight.y - 1.629f) - mouseYcoord;
-
-					// Clamp weapons if aiming down
-					angleWeaponRight = Weapon::computeAngle(diffX, diffY);
-					obj.rotateY(angleWeaponRight);
+					scene.spaceship.weaponRight.updateAngle(mvp, obj, mouseXcoord, mouseYcoord);
+					obj.rotateY(scene.spaceship.weaponRight.angle);
 				}
 
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
@@ -442,10 +425,10 @@ int main() {
 
 			//Get rotation for weapons computed in the shadowPrograw
 			if (i == 1) {
-				obj.rotateY(angleWeaponLeft);
+				obj.rotateY(scene.spaceship.weaponLeft.angle);
 			}
 			if (i == 2) {
-				obj.rotateY(angleWeaponRight);
+				obj.rotateY(scene.spaceship.weaponRight.angle);
 			}
 
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp * *obj.getModelMatrix()));

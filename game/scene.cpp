@@ -17,7 +17,7 @@ void Scene::build() {
 	surface.generate();
 	surface.specularColor = { 0, 0, 0 };
 	surface.specularIntensity = 0;
-	surface.useTex = true;
+	surface.useTex = false;
 	objects.push_back(&surface);
 }
 
