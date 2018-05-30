@@ -9,7 +9,9 @@ void Weapon::attachToSpaceship(GameObject* s) {
 }
 
 void Weapon::buildGeometry() {
+	body.diffuseColor = glm::vec3(0.75f, 0.75f, 0.75f);
 	body.loadFromFile("SingleWeapon.obj");
+	
 	updateGeometry();
 }
 
