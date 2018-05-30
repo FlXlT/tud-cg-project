@@ -1,7 +1,7 @@
 #include "spaceship.h"
 
 Spaceship::Spaceship() {
-	position = glm::vec3(0.0f, -0.2f, 2.0f);
+	position = glm::vec3(0.0f, -0.2f, 3.0f);
 }
 
 void Spaceship::buildGeometry() {

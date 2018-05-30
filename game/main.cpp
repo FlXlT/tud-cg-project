@@ -350,8 +350,9 @@ int main() {
 			glUniform1f(glGetUniformLocation(shadowProgram, "time"), static_cast<float>(glfwGetTime()));
 
 			// Render objects
-			for (int i = 0; i < scene.objects.size(); i++) {
-				GeometricObject obj = *scene.objects[i];
+			std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
+			for (int i = 0; i < geometricObjects.size(); i++) {
+				GeometricObject obj = *geometricObjects[i];
 				glBindVertexArray(obj.vao);
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
@@ -404,8 +405,9 @@ int main() {
 		scene.update();
 
 		// Render objects
-		for (int i = 0; i < scene.objects.size(); i++) {
-			GeometricObject obj = *scene.objects[i];
+		std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
+		for (int i = 0; i < geometricObjects.size(); i++) {
+			GeometricObject obj = *geometricObjects[i];
 			glBindVertexArray(obj.vao);
 
 			if (i == 0) {
