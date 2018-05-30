@@ -171,8 +171,11 @@ void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
-	mouseXcoord = (float) ((xpos*10)/(WIDTH)) - 5;
-	mouseYcoord = (float) ((ypos*10)/(HEIGHT)) - 5;
+	//mouseXcoord = (float) ((xpos*10)/(WIDTH)) - 5;
+	//mouseYcoord = (float) ((ypos*10)/(HEIGHT)) - 5;
+
+	mouseXcoord = xpos;
+	mouseYcoord = ypos;
 	//camCursorPosHandler(xpos, ypos);
 }
 
@@ -353,6 +356,24 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
+		glm::mat4 mvp = mainCamera->vpMatrix();
+		glm::mat4 imvp = inverse(mvp);
+
+		// mouse coords from -1 to 1
+		const float mouseX = 2 * mouseXcoord / WIDTH - 1;
+		const float mouseY = -(2 * mouseYcoord / HEIGHT - 1);
+
+		glm::vec4 spaceshipScreenPos = mvp * glm::vec4(scene.spaceship.position, 1.0f);
+		spaceshipScreenPos = glm::vec4(spaceshipScreenPos * glm::vec4(1.0f / spaceshipScreenPos.w));
+
+		// mouse screen pos
+		glm::vec4 mouseScreenPos = { mouseX, mouseY, spaceshipScreenPos.z, 1.0f };
+
+		// mouse world pos
+		glm::vec4 mouseWorldPos = imvp * mouseScreenPos;
+
+		scene.cursor.position = glm::vec3(mouseWorldPos / glm::vec4(mouseWorldPos.w));
+
 		scene.update();
 
 		if (cameraMode == cameraModes::follow) {
@@ -360,7 +381,7 @@ int main() {
 		}
 
 		// Model/view/projection matrix from the point of view of the mainCamera and shadowCamera
-		glm::mat4 mvp = mainCamera->vpMatrix();
+		mvp = mainCamera->vpMatrix();
 		glm::mat4 lightMVP = secondCamera.vpMatrix();
 
 		float angleWeaponLeft = 0;
