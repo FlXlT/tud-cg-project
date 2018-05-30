@@ -13,4 +13,6 @@ public:
 	void buildGeometry();
 	void updateGeometry();
 	std::vector<GeometricObject*> getGeometry();
+
+	static float computeAngle(float diffY, float diffX);
 };

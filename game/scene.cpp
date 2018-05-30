@@ -12,7 +12,7 @@ void Scene::build() {
 }
 
 std::vector<GeometricObject*> Scene::getGeometricObjects() {
-	std::vector<GeometricObject*> geometricObjects;	
+	std::vector<GeometricObject*> geometricObjects;
 
 	for (int o = 0; o < objects.size(); o++) {
 		std::vector<GeometricObject*> geometry = objects[o]->getGeometry();
@@ -33,7 +33,7 @@ void Scene::generateBufferObjects() {
 
 void Scene::handleKey(int key, int action) {
 	switch (key) {
-	case GLFW_KEY_A :
+	case GLFW_KEY_A:
 		if (action == GLFW_PRESS)   spaceship.targetSpeed.x = -0.05;
 		if (action == GLFW_RELEASE) spaceship.targetSpeed.x = 0.0;
 		break;
