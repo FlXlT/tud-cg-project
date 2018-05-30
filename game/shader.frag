@@ -28,9 +28,9 @@ void main() {
 	bool inShadow = false;
 	float sum = 0.0;
 	float iterations = 0.0;	
-	float sampleArea = 0.002;
-	float sampleSize = 0.0004;
-	float bias = 0.001;
+	float sampleArea = 0.001;
+	float sampleSize = 0.0002;
+	float bias = 0.00001;
 	float visibility_factor = 0.2;
 	
 	vec4 fragLightCoord = lightMVP * vec4(fragPos, 1.0);
@@ -102,6 +102,9 @@ void main() {
 		specular = vec3(0,0,0);
 	}
 	
-	outColor = (sum / iterations) * vec4(diffuse + specular, 1.0);
-	//outColor = vec4(vec3(1, 1, 1), 1.0);
+	if(specular.x > 0.0f && specular.y > 0.0f && specular.z > 0.0f){
+		outColor = (sum/iterations) * vec4(diffuse + specular, 1.0f);
+	} else {
+		outColor = (sum/iterations) * vec4(diffuse, 1.0f);
+	}
 }
