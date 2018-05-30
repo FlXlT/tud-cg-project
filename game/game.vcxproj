@@ -17,6 +17,7 @@
     <ClCompile Include="geometric_object.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="spaceship.cpp" />
+    <ClCompile Include="terrain.cpp" />
     <ClCompile Include="weapon.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -32,6 +33,7 @@
     <ClInclude Include="laser.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="spaceship.h" />
+    <ClInclude Include="terrain.h" />
     <ClInclude Include="vertex.h" />
     <ClInclude Include="weapon.h" />
   </ItemGroup>

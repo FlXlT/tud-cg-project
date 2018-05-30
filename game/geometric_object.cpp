@@ -10,25 +10,16 @@ GeometricObject::GeometricObject(GeometricObject* p) {
 	model = glm::mat4();
 }
 
-// very basic terrain generation, will be updated to textured and waved surface
-void GeometricObject::generate() {
-	int nbQuadsX = 10;
-	int nbQuadsY = 10;
-	int nbQuads = nbQuadsX * nbQuadsY;
+// terrain generation, had a little bit too much fun with this, hence all the parameters
+void GeometricObject::generateSurface(const unsigned int mode, const float width, const float height, const float depth, const int nbQuadsX, const int nbQuadsY, const int nbQuadsPerTexX, const int nbQuadsPerTexY, const int periodsX, const int periodsY) {
+	const int nbQuads = nbQuadsX * nbQuadsY;
 
-	int nbVertsX = nbQuadsX + 1;
-	int nbVertsY = nbQuadsY + 1;
-	int nbVerts = nbVertsX * nbVertsY;
+	const int nbVertsX = nbQuadsX + 1;
+	const int nbVertsY = nbQuadsY + 1;
+	const int nbVerts = nbVertsX * nbVertsY;
 
-	float quadWidth = 0.5f;
-	float quadHeight = 0.5f;
-
-	float width = nbQuadsX * quadWidth;
-	float height = nbQuadsY * quadHeight;
-	float depth = 1.5f;
-
-	int nbQuadsPerTexX = 10;
-	int nbQuadsPerTexY = 10;
+	const float quadWidth = width / nbQuadsX;
+	const float quadHeight = height / nbQuadsY;
 
 	glm::vec2 texSizePerQuad = {
 		1.0f / (float)nbQuadsPerTexX,
@@ -70,8 +61,27 @@ void GeometricObject::generate() {
 
 			glm::vec3 pos;
 
-			// assign consistent random z coordinate
-			pos.z = zCoords[v];
+			// the surface mode determines the distribution of z coordinates
+			if (mode == surface_modes::random) {
+				// assign consistent random z coordinate
+				pos.z = zCoords[v];
+			}
+			else if (mode == surface_modes::sinusoidal) {
+				const float progressionX = periodsX * (float)vx / (float)nbVertsX;
+				const float progressionY = periodsY * (float)vy / (float)nbVertsY;
+
+				const float angleX = 2 * M_PI * progressionX;
+				const float angleY = 2 * M_PI * progressionY;
+
+				pos.z = depth * (0.5f * sin(angleX) + 0.5f * sin(angleY));
+
+				const float normalAngleY = (0.3f * M_PI * cos(angleX));
+				const float normalAngleX = (0.3f * M_PI * cos(angleY));
+				glm::mat3 rotationY = glm::mat3(glm::rotate(glm::mat4(), normalAngleY, glm::vec3(0, 1, 0)));
+				glm::mat3 rotationX = glm::mat3(glm::rotate(glm::mat4(), normalAngleX, glm::vec3(1, 0, 0)));
+				normals[v] = rotationY * rotationX * glm::vec3(0, 0, 1);
+			}
+			
 
 			// make coordinates absolute by application of start position and offset
 			pos = pos + start + offset;
@@ -83,96 +93,98 @@ void GeometricObject::generate() {
 
 
 	// generate normals
-	int dx = 1;
-	int dy = nbVertsX;
-	int minX = 0;
-	int maxX = nbVertsX - 1;
-	int minY = 0;
-	int maxY = nbVertsY - 1;
+	if (mode == surface_modes::random) {
+		int dx = 1;
+		int dy = nbVertsX;
+		int minX = 0;
+		int maxX = nbVertsX - 1;
+		int minY = 0;
+		int maxY = nbVertsY - 1;
 
-	for (int vx = 0; vx < nbVertsX; vx++) {
-		for (int vy = 0; vy < nbVertsY; vy++) {
-			int v = vx + vy * (nbVertsX);
+		for (int vx = 0; vx < nbVertsX; vx++) {
+			for (int vy = 0; vy < nbVertsY; vy++) {
+				int v = vx + vy * (nbVertsX);
 
-			glm::vec3 a = positions[v];
+				glm::vec3 a = positions[v];
 
-			bool left = vx > minX;
-			bool right = vx < maxX;
-			bool top = vy < maxY;
-			bool bottom = vy > minY;
+				bool left = vx > minX;
+				bool right = vx < maxX;
+				bool top = vy < maxY;
+				bool bottom = vy > minY;
 
-			// Face normal interpolation
+				// Face normal interpolation
 
-			glm::vec3 normalFaces = glm::vec3(0.0f, 0.0f, 0.0f);
+				glm::vec3 normalFaces = glm::vec3(0.0f, 0.0f, 0.0f);
 
-			std::vector<glm::vec2> triangleIndices;
+				std::vector<glm::vec2> triangleIndices;
 
-			if (left && top) {
-				triangleIndices.push_back(glm::vec2(v + dy, v + dy - dx));
-			}
-			if (right && top) {
-				triangleIndices.push_back(glm::vec2(v + dx + dy, v + dy));
-				triangleIndices.push_back(glm::vec2(v + dx, v + dx + dy));
-			}
-			if (right && bottom) {
-				triangleIndices.push_back(glm::vec2(v - dy, v + dx));
-			}
-			if (left && bottom) {
-				triangleIndices.push_back(glm::vec2(v - dx - dy, v - dy));
-				triangleIndices.push_back(glm::vec2(v - dx, v - dx - dy));
-			}
+				if (left && top) {
+					triangleIndices.push_back(glm::vec2(v + dy, v + dy - dx));
+				}
+				if (right && top) {
+					triangleIndices.push_back(glm::vec2(v + dx + dy, v + dy));
+					triangleIndices.push_back(glm::vec2(v + dx, v + dx + dy));
+				}
+				if (right && bottom) {
+					triangleIndices.push_back(glm::vec2(v - dy, v + dx));
+				}
+				if (left && bottom) {
+					triangleIndices.push_back(glm::vec2(v - dx - dy, v - dy));
+					triangleIndices.push_back(glm::vec2(v - dx, v - dx - dy));
+				}
 
-			for (int i = 0; i < triangleIndices.size(); i++) {
-				glm::vec3 b = positions[triangleIndices[i][0]];
-				glm::vec3 c = positions[triangleIndices[i][1]];
-				normalFaces += dot(b - a, c - a);
-			}
-			normalize(normalFaces);
+				for (int i = 0; i < triangleIndices.size(); i++) {
+					glm::vec3 b = positions[triangleIndices[i][0]];
+					glm::vec3 c = positions[triangleIndices[i][1]];
+					normalFaces += dot(b - a, c - a);
+				}
+				normalize(normalFaces);
 
-			// Centroid normal interpolation
+				// Centroid normal interpolation
 
-			glm::vec3 normalCentroid = glm::vec3(0.0f, 0.0f, 0.0f);
+				glm::vec3 normalCentroid = glm::vec3(0.0f, 0.0f, 0.0f);
 
-			std::vector<int> neighbourIndices;
+				std::vector<int> neighbourIndices;
 
-			if (vx > minX) {
-				neighbourIndices.push_back(v - dx);
-			}
-			if (vx < maxX) {
-				neighbourIndices.push_back(v + dx);
-			}
-			if (vy > minY) {
-				neighbourIndices.push_back(v - dy);
-			}
-			if (vy < maxY) {
-				neighbourIndices.push_back(v + dy);
-			}
-			if (vx > minX && vy > minY) {
-				neighbourIndices.push_back(v - dx - dy);
-			}
-			if (vx < maxX && vy < maxY) {
-				neighbourIndices.push_back(v + dx + dy);
-			}
-			if (vx > minX && vy < maxY) {
-				//neighbourIndices.push_back(v - dx + dy);
-			}
-			if (vx < maxX && vy > minY) {
-				//neighbourIndices.push_back(v + dx - dy);
-			}
+				if (vx > minX) {
+					neighbourIndices.push_back(v - dx);
+				}
+				if (vx < maxX) {
+					neighbourIndices.push_back(v + dx);
+				}
+				if (vy > minY) {
+					neighbourIndices.push_back(v - dy);
+				}
+				if (vy < maxY) {
+					neighbourIndices.push_back(v + dy);
+				}
+				if (vx > minX && vy > minY) {
+					neighbourIndices.push_back(v - dx - dy);
+				}
+				if (vx < maxX && vy < maxY) {
+					neighbourIndices.push_back(v + dx + dy);
+				}
+				if (vx > minX && vy < maxY) {
+					//neighbourIndices.push_back(v - dx + dy);
+				}
+				if (vx < maxX && vy > minY) {
+					//neighbourIndices.push_back(v + dx - dy);
+				}
 
-			for (int i = 0; i < neighbourIndices.size(); i++) {
-				normalCentroid += a - positions[neighbourIndices[i]];
-			}
-			normalize(normalCentroid);
-			// dirty trick to make sure all normals are on the right side of the surface
-			if (normalCentroid.z < 0) {
-				normalCentroid = glm::vec3(-1) * normalCentroid;
-			}
+				for (int i = 0; i < neighbourIndices.size(); i++) {
+					normalCentroid += a - positions[neighbourIndices[i]];
+				}
+				normalize(normalCentroid);
+				// dirty trick to make sure all normals are on the right side of the surface
+				if (normalCentroid.z < 0) {
+					normalCentroid = glm::vec3(-1) * normalCentroid;
+				}
 
-			glm::vec3 normal = normalFaces + normalCentroid;
-			normalize(normal);
+				glm::vec3 normal = normalFaces + normalCentroid;
+				normalize(normal);
 
-			normals[v] = normalCentroid;
+				normals[v] = normalCentroid;
+			}
 		}
 	}
 

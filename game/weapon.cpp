@@ -5,6 +5,7 @@
 void Weapon::attachToSpaceship(GameObject* s) {
 	spaceship = s;
 	body.parent = &spaceship->body;
+	angle = 0;
 }
 
 void Weapon::buildGeometry() {
@@ -67,4 +68,22 @@ float Weapon::computeAngle(float diffX, float diffY) {
 		rotation = -1 * atan(diffX / diffY);
 	}
 	return rotation;
+}
+
+void Weapon::updateAngle(GeometricObject obj) {
+	obj.rotateY(angle);
+}
+
+void Weapon::updateAngle(glm::mat4 mvp, GeometricObject obj, float mouseXcoord, float mouseYcoord) {
+	glm::vec4 screenposSpaceship = mvp * glm::vec4(spaceship->position, 1.0);
+	
+	glm::vec4 screenposWeapon = mvp * glm::vec4(obj.position, 1.0);
+	screenposWeapon = screenposWeapon + screenposSpaceship;
+
+	float diffX = screenposWeapon.x - mouseXcoord;
+	float diffY = -(screenposWeapon.y - 1.629f) - mouseYcoord;
+
+	// Clamp weapons if aiming down
+	float angleWeapon = computeAngle(diffX, diffY);
+	angle = angleWeapon;
 }

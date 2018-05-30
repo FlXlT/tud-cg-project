@@ -17,4 +17,8 @@ public:
 
 	void move(glm::vec3 movement);
 	void update();
+
+	virtual void buildGeometry() = 0;
+	virtual void updateGeometry() = 0;
+	virtual std::vector<GeometricObject*> getGeometry() = 0;
 };

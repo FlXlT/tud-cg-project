@@ -20,6 +20,9 @@
       <Filter>source\game_objects</Filter>
     </ClCompile>
     <ClCompile Include="laser.cpp">
+    <Filter>source\game_objects</Filter>
+    </ClCompile>
+    <ClCompile Include="terrain.cpp">
       <Filter>source\game_objects</Filter>
     </ClCompile>
   </ItemGroup>
@@ -60,6 +63,9 @@
       <Filter>source\game_objects</Filter>
     </ClInclude>
     <ClInclude Include="laser.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
+    <ClInclude Include="terrain.h">
       <Filter>source\game_objects</Filter>
     </ClInclude>
   </ItemGroup>

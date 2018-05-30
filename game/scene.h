@@ -6,6 +6,7 @@
 #include "geometric_object.h"
 #include "spaceship.h"
 #include "laser.h"
+#include "terrain.h"
 
 class Scene {
 	bool      leftMousePressed = false;
@@ -13,7 +14,9 @@ class Scene {
 	
 public:
 
-	std::vector<GeometricObject*> objects;
+	std::vector<GameObject*> objects;
+
+	std::vector<GeometricObject*> getGeometricObjects();
 
 	Spaceship spaceship;
 	GeometricObject laser1;
@@ -21,6 +24,7 @@ public:
 	GeometricObject weaponLeft;
 	GeometricObject weaponRight;
 	GeometricObject surface;
+	Terrain terrain;
 
 	void build();
 	void generateBufferObjects();
