@@ -1,7 +1,7 @@
 #include "spaceship.h"
 
 Spaceship::Spaceship() {
-	position = glm::vec3(0.0f, -0.2f, 3.0f);
+	position = glm::vec3(0.0f, -0.2f, 4.0f);
 }
 
 void Spaceship::buildGeometry() {
@@ -54,28 +54,28 @@ std::vector<GeometricObject*> Spaceship::getGeometry() {
 }
 
 bool Spaceship::collidesLeft() {
-	if (position.x <= -2.5f) {
+	if (position.x <= -3.0f) {
 		return true;
 	}
 	return false;
 }
 
 bool Spaceship::collidesRight() {
-	if (position.x >= 2.5f) {
+	if (position.x >= 3.0f) {
 		return true;
 	}
 	return false;
 }
 
 bool Spaceship::collidesUp() {
-	if (position.y >= 1.65f) {
+	if (position.y >= 2.0f) {
 		return true;
 	}
 	return false;
 }
 
 bool Spaceship::collidesDown() {
-	if (position.y <= -2.0f) {
+	if (position.y <= -2.2f) {
 		return true;
 	}
 	return false;
