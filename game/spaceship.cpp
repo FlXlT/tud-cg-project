@@ -5,7 +5,9 @@ Spaceship::Spaceship() {
 }
 
 void Spaceship::buildGeometry() {
+	body.diffuseColor = glm::vec3(0.75f, 0.75f, 0.75f);
 	body.loadFromFile("spaceship.obj");
+	
 
 	weaponLeft.attachToSpaceship(this);
 	weaponLeft.position = glm::vec3(-0.25f, 0.875f, -0.125f);

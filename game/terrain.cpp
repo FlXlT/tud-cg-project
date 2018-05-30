@@ -2,7 +2,7 @@
 
 void Terrain::buildGeometry() {
 	body.diffuseColor = { 133.0f / 255.0f, 104.0f / 255.0f, 238.0f / 255.0f };
-	body.generateSurface(surface_modes::sinusoidal, 20, 20, 1.5f, 40, 40, 10, 10, 4, 4);
+	body.generateSurface(surface_modes::sinusoidal, 20, 20, 1.5f, 80, 80, 20, 20, 4, 4);
 	body.specularColor = { 0, 0, 0 };
 	body.specularIntensity = 0;
 	body.useTex = true;
@@ -15,7 +15,6 @@ void Terrain::updateGeometry() {
 	if (position.y <= 0) {
 		position.y = 5;
 	}
-
 	body.clearModelMatrix();
 	body.position = position;
 	body.applyPosition();

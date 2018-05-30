@@ -13,6 +13,8 @@ layout(location = 8) uniform vec3 lightPos = vec3(0, 0, 4);
 layout(location = 9) uniform vec3 specularColor = vec3(1.0f, 1.0f, 1.0f);
 layout(location = 10) uniform float specularIntensity = 64;
 
+layout(location = 11) uniform vec3 ambientColor = vec3(0.1f, 0.1f, 0.1f);
+
 // Output for on-screen color
 layout(location = 0) out vec4 outColor;
 
@@ -68,10 +70,10 @@ void main() {
 			iterations += 1.0;
 		}
 	}
-	
-	//vec3 lightPosVariance = vec3(sin(time)*3, 3.0, cos(time)*3);
-	vec3 lightDir = normalize(lightPos - fragPos);
 
+	// Compute incoming light direction vector
+	vec3 lightDir = normalize(lightPos - fragPos);
+	
 	// Material texture color value
 	vec3 materialColor;
 	if (useTexMaterial) {
@@ -80,8 +82,11 @@ void main() {
 		materialColor = vec3(1.0f, 1.0f, 1.0f);
 	}
 
+	// Ambient shading
+	vec3 ambient = ambientColor;
+
 	// Diffuse shading
-	vec3 Kd = fragColor * materialColor;
+	vec3 Kd = fragColor;
 
 	const float diffuseFactor = dot(lightDir, fragNormal);
 	vec3 diffuse = Kd * diffuseFactor;
@@ -103,5 +108,10 @@ void main() {
 		specular = vec3(0,0,0);
 	}
 	
-	outColor = (sum/iterations) * vec4(diffuse + specular, 1.0f);
+	// Compute final Phong shaded color with texture information included
+	vec3 color = (ambient + diffuse) * materialColor + specular;
+	color = clamp(color, vec3(0, 0, 0), vec3(1.0, 1.0, 1.0));
+
+	// Apply shadow map test results to final color
+	outColor = (sum/iterations) * vec4(color, 1.0f);
 }
