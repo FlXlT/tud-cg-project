@@ -25,6 +25,15 @@
 // random number generation
 #include <cstdlib>
 
+// PI constant
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+namespace surface_modes {
+	const unsigned int random = 0;
+	const unsigned int sinusoidal = 1;
+}
+
 class GeometricObject {
 	// List of vertices that constitute the geometric representation of this object
 	std::vector<Vertex> vertices;
@@ -60,7 +69,7 @@ public:
 	void generateBufferObjects();
 
 	void loadFromFile(const char* filename);
-	void generate();
+	void generateSurface(const unsigned int mode, const float width, const float height, const float depth, const int nbQuadsX, const int nbQuadsY, const int nbQuadsPerTexX, const int nbQuadsPerTexY, const int periodsX, const int periodsY);
 	std::vector<Vertex>* getVertices();
 	int size();
 	Vertex* data();

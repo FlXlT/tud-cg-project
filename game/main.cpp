@@ -308,7 +308,7 @@ int main() {
 	/////////////////// Create main camera
 	Camera firstCamera;
 	firstCamera.aspect = WIDTH / (float)HEIGHT;
-	firstCamera.position = glm::vec3(0.0f, 0.0f, 7.0f);
+	firstCamera.position = glm::vec3(0.0f, 0.0f, 10.0f);
 	firstCamera.forward  = -firstCamera.position; // point to origin
 	firstCamera.up = glm::vec3(0.0f, 1.0f, 0.0f);
 	cameras.push_back(firstCamera);
@@ -316,7 +316,7 @@ int main() {
 	/////////////////// Create second camera for shadow mapping
 	Camera secondCamera;
 	secondCamera.aspect = WIDTH / (float)HEIGHT;
-	secondCamera.position = glm::vec3(-1.0f, 1.0f, 10.0f);
+	secondCamera.position = glm::vec3(-1.0f, 1.0f, 15.0f);
 	secondCamera.forward  = -secondCamera.position;
 	secondCamera.up = glm::vec3(0.0f, 0.0f, 1.0f);
 	cameras.push_back(secondCamera);
@@ -356,8 +356,9 @@ int main() {
 			glUniform1f(glGetUniformLocation(shadowProgram, "time"), static_cast<float>(glfwGetTime()));
 
 			// Render objects
-			for (int i = 0; i < scene.objects.size(); i++) {
-				GeometricObject obj = *scene.objects[i];
+			std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
+			for (int i = 0; i < geometricObjects.size(); i++) {
+				GeometricObject obj = *geometricObjects[i];
 				glBindVertexArray(obj.vao);
 
 				if (i == 1) {
@@ -419,8 +420,9 @@ int main() {
 		scene.update();
 
 		// Render objects
-		for (int i = 0; i < scene.objects.size(); i++) {
-			GeometricObject obj = *scene.objects[i];
+		std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
+		for (int i = 0; i < geometricObjects.size(); i++) {
+			GeometricObject obj = *geometricObjects[i];
 			glBindVertexArray(obj.vao);
 
 			//Get rotation for weapons computed in the shadowPrograw

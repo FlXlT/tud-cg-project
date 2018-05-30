@@ -4,18 +4,19 @@
 
 #include "geometric_object.h"
 #include "spaceship.h"
+#include "terrain.h"
 
 class Scene {
 	
 	
 public:
 
-	std::vector<GeometricObject*> objects;
+	std::vector<GameObject*> objects;
+
+	std::vector<GeometricObject*> getGeometricObjects();
 
 	Spaceship spaceship;
-	GeometricObject weaponLeft;
-	GeometricObject weaponRight;
-	GeometricObject surface;
+	Terrain terrain;
 
 	void build();
 	void generateBufferObjects();

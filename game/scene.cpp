@@ -4,26 +4,30 @@
 #include <GLFW/glfw3.h>
 
 void Scene::build() {
-	float angleX = 90 * atan(1) * 4 / 180;
-	float angleY = 180 * atan(1) * 4 / 180;
-
 	spaceship.buildGeometry();
-	std::vector<GeometricObject*> geometry = spaceship.getGeometry();
-	for (int i = 0; i < geometry.size(); i++) {
-		objects.push_back(geometry[i]);
+	objects.push_back(&spaceship);
+
+	terrain.buildGeometry();
+	objects.push_back(&terrain);
+}
+
+std::vector<GeometricObject*> Scene::getGeometricObjects() {
+	std::vector<GeometricObject*> geometricObjects;
+
+	for (int o = 0; o < objects.size(); o++) {
+		std::vector<GeometricObject*> geometry = objects[o]->getGeometry();
+		for (int i = 0; i < geometry.size(); i++) {
+			geometricObjects.push_back(geometry[i]);
+		}
 	}
 
-	surface.diffuseColor = { 133.0f / 255.0f, 104.0f / 255.0f, 238.0f / 255.0f };
-	surface.generate();
-	surface.specularColor = { 0, 0, 0 };
-	surface.specularIntensity = 0;
-	surface.useTex = false;
-	objects.push_back(&surface);
+	return geometricObjects;
 }
 
 void Scene::generateBufferObjects() {
-	for (int i = 0; i < objects.size(); i++) {
-		(*objects[i]).generateBufferObjects();
+	std::vector<GeometricObject*> geometricObjects = getGeometricObjects();
+	for (int i = 0; i < geometricObjects.size(); i++) {
+		(*geometricObjects[i]).generateBufferObjects();
 	}
 }
 
@@ -51,5 +55,7 @@ void Scene::handleKey(int key, int action) {
 void Scene::update() {
 	spaceship.update();
 	spaceship.updateGeometry();
-}
 
+	terrain.update();
+	terrain.updateGeometry();
+}
