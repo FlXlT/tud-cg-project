@@ -98,13 +98,10 @@ void main() {
 		vec3 Ks = specularColor;
 		float specularFactor = pow(dot(fragNormal, H), specularIntensity);
 		specular = Ks * specularFactor;
+		specular = clamp(specular, vec3(0, 0, 0), vec3(1.0, 1.0, 1.0));
 	} else {
 		specular = vec3(0,0,0);
 	}
 	
-	if(specular.x > 0.0f || specular.y > 0.0f || specular.z > 0.0f){
-		outColor = (sum/iterations) * vec4(diffuse + specular, 1.0f);
-	} else {
-		outColor = (sum/iterations) * vec4(diffuse, 1.0f);
-	}
+	outColor = (sum/iterations) * vec4(diffuse + specular, 1.0f);
 }
