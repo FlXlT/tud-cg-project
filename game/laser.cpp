@@ -9,30 +9,23 @@ void Laser::attachToWeapon(GameObject* w) {
 
 void Laser::buildGeometry() {
 	body.loadFromFile("laser.obj");
-	updateGeometry(0.0,0.0);
+	targetSpeed.x = 0.0;
+	targetSpeed.y = 0.0;
+	updateGeometry();
 }
 
-int Laser::updateGeometry(float x_direction, float y_direction) {
+void Laser::updateGeometry(){
 	if (abs(position[0]) > 5 && abs(position[1]) > 5) {
 		targetSpeed.x = 0.0;  // horizontal
 		targetSpeed.z = 0.0;  // vertical 
 		body.scale(glm::vec3(0.0, 0.0, 0.0));
-		return -1;
 	}
 	else {
 		body.clearModelMatrix();
 		body.position = position;
 		body.applyPosition();
 		body.scale(size);
-
-		std::cout << x_direction << std::endl;
-		std::cout << y_direction << std::endl;
-		std::cout << "haha2" << std::endl;
-
-		targetSpeed.x = x_direction;  // horizontal
-		targetSpeed.z = y_direction;  // vertical 
 		update();
-		return 1;
 	}
 }
 
