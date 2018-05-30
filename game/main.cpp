@@ -325,7 +325,7 @@ int main() {
 	secondCamera.aspect = WIDTH / (float)HEIGHT;
 	secondCamera.position = glm::vec3(0, 0, 15.0f);
 	secondCamera.forward  = -secondCamera.position;
-	secondCamera.up = glm::vec3(0.0f, 0.0f, 1.0f);
+	secondCamera.up = glm::vec3(-1.0f, 1.0f, 1.0f);
 	cameras.push_back(secondCamera);
 
 	// Assign the first camera as the main viewport
