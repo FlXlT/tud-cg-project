@@ -29,8 +29,9 @@ void main() {
 	float sum = 0.0;
 	float iterations = 0.0;	
 	float sampleArea = 0.002;
-	float sampleSize = 0.0004;
+	float sampleSize = sampleArea / 5.0;
 	float bias = 0.001;
+	float resultShadow = 1.0;
 	float visibility_factor = 0.2;
 	
 	vec4 fragLightCoord = lightMVP * vec4(fragPos, 1.0);
@@ -47,36 +48,71 @@ void main() {
 	// Shadow map coordinate corresponding to this fragment
 	vec2 shadowMapCoord = fragLightCoord.xy;
 
-	// The main/current coordinate we are iterating over.
-	vec2 shadowMapCoordMain = vec2(shadowMapCoord.x, shadowMapCoord.y);
-
-	// Shadow map value from the corresponding shadow map position
-	float shadowMapDepthMain = texture(texShadow, shadowMapCoordMain).x;
-	float depthDiff = fragLightDepth - (shadowMapDepthMain - bias);
-
-	sampleSize += (depthDiff / fragLightDepth) * sampleSize * 10.0f;
+	vec2 shadowMapCoordUnderTest = vec2(shadowMapCoord.x, shadowMapCoord.y);
+	float shadowMapDepth = texture(texShadow, shadowMapCoordUnderTest).x;
 
 	// Percentage Closer Filtering (PCF): averaging all neighbouring shadow test results.
 	for (float y = -sampleArea; y <= sampleArea; y += sampleSize){
 		for (float x = -sampleArea; x <= sampleArea; x += sampleSize){
 
-			vec2 shadowMapCoordUnderTest = vec2(shadowMapCoord.x + x, shadowMapCoord.y + y);
+			shadowMapCoordUnderTest = vec2(shadowMapCoord.x + x, shadowMapCoord.y + y);
 
 			// Shadow map value from the corresponding shadow map position
-			float shadowMapDepth = texture(texShadow, shadowMapCoordUnderTest).x;
+			shadowMapDepth = texture(texShadow, shadowMapCoordUnderTest).x;
 
 			// The visibility factor, if it is 0 then a shadow was found
 			float visibility = 1.0;
 
 			// The shadow test, a small bias is added to avoid self-shadowing
 			if ( shadowMapDepth + bias < fragLightDepth ) {
-				visibility = visibility_factor;
 				inShadow = true;
 			}
-			sum += visibility;
-			iterations += 1.0;
 		}
 	}
+
+	if(inShadow){
+
+		float fraction = shadowMapDepth / fragLightDepth;
+
+		// if ( fraction > 0.0 ) {
+		// 	sampleArea = 0.02;
+		// }
+
+		if ( fraction <= 0.1 ){
+			sampleArea = 0.002;
+		} else if ( fraction <= 0.2 ){
+			sampleArea = 0.006;
+		} else if ( fraction <= 0.3) {
+			sampleArea = 0.01;
+		} else if ( fraction <= 0.4) {
+			sampleArea = 0.016;
+		}
+
+		sampleSize = sampleArea / 5.0f;
+
+		for (float y = -sampleArea; y <= sampleArea; y += sampleSize){
+			for (float x = -sampleArea; x <= sampleArea; x += sampleSize){
+
+				vec2 shadowMapCoordUnderTest = vec2(shadowMapCoord.x + x, shadowMapCoord.y + y);
+
+				// Shadow map value from the corresponding shadow map position
+				float shadowMapDepth = texture(texShadow, shadowMapCoordUnderTest).x;
+
+				// The visibility factor, if it is 0 then a shadow was found
+				float visibility = 1.0;
+
+				// The shadow test, a small bias is added to avoid self-shadowing
+				if ( shadowMapDepth + bias < fragLightDepth ) {
+					visibility = visibility_factor;
+					inShadow = true;
+				}
+				sum += visibility;
+				iterations += 1.0;
+			}
+		}
+		resultShadow = (sum / iterations);
+	}
+	
 	
 	//vec3 lightPosVariance = vec3(sin(time)*3, 3.0, cos(time)*3);
 	vec3 lightDir = normalize(lightPos - fragPos);
@@ -112,8 +148,8 @@ void main() {
 	}
 	
 	if(specular.x > 0.0f || specular.y > 0.0f || specular.z > 0.0f){
-		outColor = (sum/iterations) * vec4(diffuse + specular, 1.0f);
+		outColor = resultShadow * vec4(diffuse + specular, 1.0f);
 	} else {
-		outColor = (sum/iterations) * vec4(diffuse, 1.0f);
+		outColor = resultShadow * vec4(diffuse, 1.0f);
 	}
 }
