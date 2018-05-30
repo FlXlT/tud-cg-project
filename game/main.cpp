@@ -323,7 +323,7 @@ int main() {
 	/////////////////// Create second camera for shadow mapping
 	Camera secondCamera;
 	secondCamera.aspect = WIDTH / (float)HEIGHT;
-	secondCamera.position = glm::vec3(-1.0f, 1.0f, 20.0f);
+	secondCamera.position = glm::vec3(-1.0f, 1.0f, 14.0f);
 	secondCamera.forward  = -secondCamera.position;
 	secondCamera.up = glm::vec3(0.0f, 0.0f, 1.0f);
 	cameras.push_back(secondCamera);
