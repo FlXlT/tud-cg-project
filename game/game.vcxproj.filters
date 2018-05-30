@@ -28,6 +28,7 @@
     <ClCompile Include="enemyspaceship.cpp">
       <Filter>source\game_objects</Filter>
     </ClCompile>
+    <ClCompile Include="enemycontroller.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -74,6 +75,7 @@
     <ClInclude Include="enemyspaceship.h">
       <Filter>source\game_objects</Filter>
     </ClInclude>
+    <ClInclude Include="enemycontroller.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">

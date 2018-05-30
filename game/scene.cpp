@@ -9,6 +9,8 @@ void Scene::build() {
 
 	terrain.buildGeometry();
 	objects.push_back(&terrain);
+
+	enemyController.init();
 }
 
 std::vector<GeometricObject*> Scene::getGeometricObjects() {
@@ -28,6 +30,20 @@ void Scene::generateBufferObjects() {
 	std::vector<GeometricObject*> geometricObjects = getGeometricObjects();
 	for (int i = 0; i < geometricObjects.size(); i++) {
 		(*geometricObjects[i]).generateBufferObjects();
+	}
+}
+
+void Scene::generateLaserBufferObjects() {
+	std::vector<GeometricObject*> geometricObjects = getGeometricObjects();
+	(*geometricObjects[2]).generateBufferObjects();
+	(*geometricObjects[4]).generateBufferObjects();
+}
+
+void Scene::generateEnemyBufferObjects() {
+	std::vector<GeometricObject*> geometricObjects = getGeometricObjects();
+	for (int i = 0; i < enemyController.amountEnemies; i++)
+	{
+		(*geometricObjects[5 + i]).generateBufferObjects();
 	}
 }
 
@@ -58,7 +74,7 @@ void Scene::sceneMouseButtonHandler(int button, int action, float mouseXcoord, f
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		if (lastTimeShot + 1 < std::time(nullptr)) { // Only possible to shoot one time per second
 			spaceship.shootLaser(mouseProjection, spaceshipProjection);
-			generateBufferObjects();   /// Beter een eigen bufferobjects :)
+			generateLaserBufferObjects(); 
 			lastTimeShot = std::time(nullptr);
 		}
 	}
@@ -70,4 +86,6 @@ void Scene::update() {
 
 	terrain.update();
 	terrain.updateGeometry();
+
+	enemyController.update();
 }
