@@ -366,11 +366,11 @@ int main() {
 					scene.spaceshipProjection = glm::vec2(tempVec[0], tempVec[1]);
 				}
 				if (i == 1) {
-					scene.spaceship.weaponLeft.updateAngle(mvp, obj, mouseXcoord, mouseYcoord);
+					scene.spaceship.weaponLeft.updateAngle(mvp, obj, scene.mouseProjection[0], scene.mouseProjection[1]);
 					obj.rotateY(scene.spaceship.weaponLeft.angle);
 				}
 				if (i == 3) {
-					scene.spaceship.weaponRight.updateAngle(mvp, obj, mouseXcoord, mouseYcoord);
+					scene.spaceship.weaponRight.updateAngle(mvp, obj, scene.mouseProjection[0], scene.mouseProjection[1]);
 					obj.rotateY(scene.spaceship.weaponRight.angle);
 				}
 

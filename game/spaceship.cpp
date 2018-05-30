@@ -56,21 +56,15 @@ std::vector<GeometricObject*> Spaceship::getGeometry() {
 
 void Spaceship::shootLaser(glm::vec2 mouseProjection, glm::vec2 spaceshipProjection) {
 
-	/*float dir_x = mouseX - position[0] + weaponLeft.position[0];
-	float dir_y = -1*mouseY - position[1] + weaponLeft.position[1];
+	float dir_x = mouseProjection[0] - spaceshipProjection[0]; // +weaponLeft.position[0];
+	float dir_y = -1 * mouseProjection[1] - spaceshipProjection[1]; //+ weaponLeft.position[1];
 	float length = sqrt(dir_x*dir_x + dir_y * dir_y);
-*/
-	float dir_x = mouseProjection[0] - spaceshipProjection[0] + weaponLeft.position[0];
-	float dir_y = -1*mouseProjection[1] - spaceshipProjection[1] + weaponLeft.position[1];
-	float length = sqrt(dir_x*dir_x + dir_y * dir_y);
-	weaponLeft.shootLaser(dir_x/length*0.5, dir_y/length*0.5);
+	weaponLeft.shootLaser(dir_x/length* velocityLasers, dir_y/length* velocityLasers);
+
 	float dir_x2 = mouseProjection[0] - spaceshipProjection[0] + weaponRight.position[0];
 	float dir_y2 = -1*mouseProjection[1] - spaceshipProjection[1] + weaponRight.position[1];
 	float length2 = sqrt(dir_x2 * dir_x2 + dir_y2 * dir_y2);
-	//float dir_x2 = mouseX - position[0] + weaponRight.position[0];
-	//float dir_y2 = -1*mouseY - position[1] + weaponRight.position[1];
-	//float length2 = sqrt(dir_x2*dir_x2 + dir_y2 * dir_y2);
-	weaponRight.shootLaser(dir_x2/length2*0.5, dir_y2/length2*0.5);
+	weaponRight.shootLaser(dir_x2/length2* velocityLasers, dir_y2/length2* velocityLasers);
 }
 
 bool Spaceship::collidesLeft() {

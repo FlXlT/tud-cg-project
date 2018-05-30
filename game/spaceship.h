@@ -11,6 +11,8 @@ public:
 	Weapon weaponLeft;
 	Weapon weaponRight;
 
+	float velocityLasers = 0.1;
+
 	Spaceship();
 
 	void buildGeometry();

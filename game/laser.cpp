@@ -11,6 +11,8 @@ void Laser::buildGeometry() {
 	body.loadFromFile("laser.obj");
 	targetSpeed.x = 0.0;
 	targetSpeed.y = 0.0;
+	speed.x = 0.0;
+	speed.y = 0.0;
 	updateGeometry();
 }
 
@@ -18,6 +20,8 @@ void Laser::updateGeometry(){
 	if (abs(position[0]) > 5 && abs(position[1]) > 5) {
 		targetSpeed.x = 0.0;  // horizontal
 		targetSpeed.z = 0.0;  // vertical 
+		speed.x = 0.0;
+		speed.y = 0.0;
 		body.scale(glm::vec3(0.0, 0.0, 0.0));
 	}
 	else {
