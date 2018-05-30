@@ -365,7 +365,7 @@ int main() {
 					scene.spaceship.weaponLeft.updateAngle(mvp, obj, mouseXcoord, mouseYcoord);
 					obj.rotateY(scene.spaceship.weaponLeft.angle);
 				}
-				if (i == 2) {
+				if (i == 3) {
 					scene.spaceship.weaponRight.updateAngle(mvp, obj, mouseXcoord, mouseYcoord);
 					obj.rotateY(scene.spaceship.weaponRight.angle);
 				}

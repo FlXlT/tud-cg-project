@@ -67,10 +67,6 @@ void Spaceship::shootLaser(float mouseX, float mouseY) {
 	float dir_y = -1*mouseY - position[1] + weaponLeft.position[1];
 	float length = sqrt(dir_x*dir_x + dir_y * dir_y);
 
-	std::cout << dir_x << std::endl;	
-	std::cout << dir_y << std::endl;
-	std::cout << "haha" << std::endl;
-
 	weaponLeft.shootLaser(dir_x/length*0.5, dir_y/length*0.5);
 	float dir_x2 = mouseX - position[0] + weaponRight.position[0];
 	float dir_y2 = -1*mouseY - position[1] + weaponRight.position[1];
