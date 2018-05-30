@@ -22,22 +22,23 @@ void Weapon::updateGeometry() {
 	body.rotateX(angleY);
 	body.scale(size);	
 
-	laserOOB = laserBeam.updateGeometry();
+	laserOOB = laserBeam.updateGeometry(laserBeam.targetSpeed.x,laserBeam.targetSpeed.z);
 	//if (laserOOB == -1) {
 	//	//laserBeam = NULL;
 	//}
 }
 
-void Weapon::shootLaser() {
+void Weapon::shootLaser(float x_direction, float y_direction) {
 	laserBeam.attachToWeapon(this);
 	laserBeam.position = glm::vec3(0.0f, 0.0f, 0.0f);
 	laserBeam.buildGeometry();
+	laserBeam.updateGeometry(x_direction, y_direction);
 
 	updateGeometry();
 
-	laserBeam.targetSpeed.x = 0.05;
-	laserBeam.targetSpeed.y = 0.05;
-	laserBeam.update();
+	//laserBeam.targetSpeed.x = x_direction;
+	//laserBeam.targetSpeed.y = y_direction;
+	//laserBeam.update();
 }
 
 std::vector<GeometricObject*> Weapon::getGeometry() {

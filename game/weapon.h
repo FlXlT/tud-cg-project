@@ -13,11 +13,10 @@ public:
 
 	void attachToSpaceship(GameObject* spaceship);
 
-	void Weapon::shootLaser();
+	void Weapon::shootLaser(float x_direction, float y_direction);
 	void buildGeometry();
 	void updateGeometry();
 	std::vector<GeometricObject*> getGeometry();
-	void Weapon::detachLaser();
 
 	static float computeAngle(float diffY, float diffX);
 };

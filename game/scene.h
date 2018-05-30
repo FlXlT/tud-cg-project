@@ -26,7 +26,7 @@ public:
 	void generateBufferObjects();
 
 	void handleKey(int key, int action);
-	void sceneMouseButtonHandler(int button, int action);
+	void sceneMouseButtonHandler(int button, int action, float mouseXcoord, float mouseYcoord);
 
 	void update();
 };

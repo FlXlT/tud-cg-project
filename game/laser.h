@@ -10,7 +10,7 @@ public:
 	void attachToWeapon(GameObject* weapon);
 
 	void buildGeometry();
-	int updateGeometry();
+	int updateGeometry(float x_direction, float y_direction);
 	std::vector<GeometricObject*> getGeometry();
 };
 

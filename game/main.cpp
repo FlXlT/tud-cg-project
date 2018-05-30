@@ -140,14 +140,14 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 {
 	camMouseButtonHandler(button, action);
-	scene.sceneMouseButtonHandler(button, action);
+	scene.sceneMouseButtonHandler(button, action, mouseXcoord, mouseYcoord);
 }
 
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
-	mouseXcoord = (float) ((xpos*10)/(WIDTH)) - 5;
-	mouseYcoord = (float) ((ypos*10)/(HEIGHT)) - 5;
-	//camCursorPosHandler(xpos, ypos);
+	mouseXcoord = (float) ((xpos*3.7)/(WIDTH)) - 1.2;
+	mouseYcoord = (float) ((ypos*5)/(HEIGHT)) - 2.5;
+	//camCursorPosHandler(xpos, ypos);	
 }
 
 
@@ -174,9 +174,9 @@ int main() {
 	}
 
 	glfwSetKeyCallback(window, keyboardHandler);
-	glfwSetMouseButtonCallback(window, mouseButtonHandler);
 	glfwSetCursorPosCallback(window, cursorPosHandler);
-
+	glfwSetMouseButtonCallback(window, mouseButtonHandler);
+	
 	// Activate the OpenGL context
 	glfwMakeContextCurrent(window);
 

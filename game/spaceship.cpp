@@ -49,13 +49,33 @@ std::vector<GeometricObject*> Spaceship::getGeometry() {
 	// Add geometry of right weapon
 	g = weaponRight.getGeometry();
 	geometry.insert(geometry.end(), g.begin(), g.end());
-
+		
 	return geometry;
 }
 
-void Spaceship::shootLaser() {
-	weaponLeft.shootLaser();
-	weaponRight.shootLaser();
+void Spaceship::shootLaser(float mouseX, float mouseY) {
+
+	std::cout << mouseX << std::endl;
+	std::cout << -1*mouseY << std::endl;
+	std::cout << "xx" << std::endl;
+
+	std::cout << position[0] + weaponLeft.position[0] << std::endl;
+	std::cout << position[1] + weaponLeft.position[1] << std::endl;
+	std::cout << "::" << std::endl;
+
+	float dir_x = mouseX - position[0] + weaponLeft.position[0];
+	float dir_y = -1*mouseY - position[1] + weaponLeft.position[1];
+	float length = sqrt(dir_x*dir_x + dir_y * dir_y);
+
+	std::cout << dir_x << std::endl;	
+	std::cout << dir_y << std::endl;
+	std::cout << "haha" << std::endl;
+
+	weaponLeft.shootLaser(dir_x/length*0.5, dir_y/length*0.5);
+	float dir_x2 = mouseX - position[0] + weaponRight.position[0];
+	float dir_y2 = -1*mouseY - position[1] + weaponRight.position[1];
+	float length2 = sqrt(dir_x2*dir_x2 + dir_y2 * dir_y2);
+	weaponRight.shootLaser(dir_x2/length2*0.5, dir_y2/length2*0.5);
 }
 
 bool Spaceship::collidesLeft() {
