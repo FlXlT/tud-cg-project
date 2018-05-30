@@ -47,6 +47,15 @@ void main() {
 	// Shadow map coordinate corresponding to this fragment
 	vec2 shadowMapCoord = fragLightCoord.xy;
 
+	// The main/current coordinate we are iterating over.
+	vec2 shadowMapCoordMain = vec2(shadowMapCoord.x, shadowMapCoord.y);
+
+	// Shadow map value from the corresponding shadow map position
+	float shadowMapDepthMain = texture(texShadow, shadowMapCoordMain).x;
+	float depthDiff = fragLightDepth - (shadowMapDepthMain - bias);
+
+	sampleSize += (depthDiff / fragLightDepth) * sampleSize * 10.0f;
+
 	// Percentage Closer Filtering (PCF): averaging all neighbouring shadow test results.
 	for (float y = -sampleArea; y <= sampleArea; y += sampleSize){
 		for (float x = -sampleArea; x <= sampleArea; x += sampleSize){
