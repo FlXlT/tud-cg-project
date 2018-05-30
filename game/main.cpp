@@ -132,6 +132,13 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 	case GLFW_KEY_2:
 		mainCamera = cameras[1];
 		break;
+	case GLFW_KEY_R:
+		if (action == GLFW_PRESS && scene.terrain.targetSpeed.y < 0.0f) {
+			scene.terrain.targetSpeed.y = 0.0f;
+		}
+		else if (action == GLFW_PRESS) {
+			scene.terrain.targetSpeed.y = -0.02f;
+		}
 	default:
 		break;
 	}
@@ -316,7 +323,7 @@ int main() {
 	/////////////////// Create second camera for shadow mapping
 	Camera secondCamera;
 	secondCamera.aspect = WIDTH / (float)HEIGHT;
-	secondCamera.position = glm::vec3(-1.0f, 1.0f, 15.0f);
+	secondCamera.position = glm::vec3(-1.0f, 1.0f, 20.0f);
 	secondCamera.forward  = -secondCamera.position;
 	secondCamera.up = glm::vec3(0.0f, 0.0f, 1.0f);
 	cameras.push_back(secondCamera);
@@ -418,7 +425,7 @@ int main() {
 		glEnable(GL_DEPTH_TEST);
 
 		scene.update();
-
+		
 		// Render objects
 		std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
 		for (int i = 0; i < geometricObjects.size(); i++) {
