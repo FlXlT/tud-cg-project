@@ -76,7 +76,7 @@ void bossman::buildGeometry()
 {
 	body.position = glm::vec3(0.0f,2.0f, 5.0f);
 	body.diffuseColor = glm::vec3(0.75f, 0.75f, 0.75f);
-	mesh.loadMesh("dodge.obj");
+	mesh.loadMesh("assets/models/baws2.obj");
 	simplified = simplifyMesh(128,mesh);
 	convertedSimpleMesh128 = MeshToGeometricObject(simplified);
 	simplified = simplifyMesh(64,mesh);

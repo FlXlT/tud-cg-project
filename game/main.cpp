@@ -475,7 +475,7 @@ int main() {
 
 			// Draw the bawsman
 			if (hitcount < 3) {
-				GeometricObject obj = *geometricObjects[8 + hitcount];
+				GeometricObject obj = *geometricObjects[7 + hitcount];
 				glBindVertexArray(obj.vao);
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
@@ -564,13 +564,14 @@ int main() {
 
 		// Draw the bawsman
 		if (hitcount < 3) {
-			GeometricObject obj = *geometricObjects[8 + hitcount];
+			GeometricObject obj = *geometricObjects[7 + hitcount];
 			glBindVertexArray(obj.vao);
 
 			obj.translateZ(3);
 			obj.translateY(2);
 			obj.rotateX(45 * atan(1) * 4 / 180);
 			obj.rotateY(atan(1) * 4 / 180);
+			obj.scale(glm::vec3(5,5,5));
 
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp * *obj.getModelMatrix()));
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));

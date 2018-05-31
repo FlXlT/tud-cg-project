@@ -1,4 +1,4 @@
-#include "grid.h"
+#include "Grid.h"
 #ifdef WIN32
 #include <windows.h>
 #endif
