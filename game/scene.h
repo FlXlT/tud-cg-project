@@ -8,19 +8,24 @@
 #include "laser.h"
 #include "terrain.h"
 #include "enemycontroller.h"
+#include "bossman.h"
 
 class Scene {
-	bool      leftMousePressed = false;
+	bool		leftMousePressed = false;
 	bool		before = false;
+	
+
 	std::time_t lastTimeShot = std::time(0);
 	
 public:
+	int	hitcount = 0;
 
 	std::vector<GameObject*> objects;
 
 	std::vector<GeometricObject*> getGeometricObjects();
 
 	Spaceship spaceship;
+	bossman bowsman;
 	GeometricObject laser1;
 	GeometricObject laser2;
 	GeometricObject weaponLeft;

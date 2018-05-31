@@ -10,10 +10,14 @@ void Scene::build() {
 	terrain.buildGeometry();
 	objects.push_back(&terrain);
 
-	enemyController.init();
 	cursor.diffuseColor = glm::vec3(1.0f, 0, 0);
 	cursor.loadFromFile("assets/models/cursor.obj");
+	//enemyController.init();
+	bowsman.buildGeometry();
+	objects.push_back(&bowsman);
 }
+
+
 
 std::vector<GeometricObject*> Scene::getGeometricObjects() {
 	std::vector<GeometricObject*> geometricObjects;
@@ -83,6 +87,10 @@ void Scene::sceneMouseButtonHandler(int button, int action, float mouseXcoord, f
 			spaceship.shootLaser(mouseProjection, spaceshipProjection);
 			generateLaserBufferObjects(); 
 			lastTimeShot = std::time(nullptr);
+			if (hitcount < 4) {
+				// simplified = simplifyMesh(128/pow(2,hitcount), mesh);
+				hitcount++;
+			}
 		}
 	}
 }
@@ -94,10 +102,15 @@ void Scene::update() {
 	terrain.update();
 	terrain.updateGeometry();
 
-	enemyController.update();
-
 	cursor.clearModelMatrix();
 	//cursor.position.z = spaceship.position.z;
 	cursor.applyPosition();
 	cursor.scale(glm::vec3(0.25f, 0.25f, 0.25f));
+
+	bowsman.update();
+	bowsman.updateGeometry();
+
+	//enemyController.update();
 }
+
+

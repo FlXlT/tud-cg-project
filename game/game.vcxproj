@@ -11,12 +11,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bossman.cpp" />
     <ClCompile Include="enemycontroller.cpp" />
     <ClCompile Include="enemyspaceship.cpp" />
     <ClCompile Include="game_object.cpp" />
     <ClCompile Include="laser.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="geometric_object.cpp" />
+    <ClCompile Include="MeshSimplification\grid.cpp" />
+    <ClCompile Include="MeshSimplification\mesh.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="spaceship.cpp" />
     <ClCompile Include="terrain.cpp" />
@@ -29,12 +32,16 @@
     <None Include="shadow.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bossman.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="enemycontroller.h" />
     <ClInclude Include="enemyspaceship.h" />
     <ClInclude Include="game_object.h" />
     <ClInclude Include="geometric_object.h" />
     <ClInclude Include="laser.h" />
+    <ClInclude Include="MeshSimplification\grid.h" />
+    <ClInclude Include="MeshSimplification\mesh.h" />
+    <ClInclude Include="MeshSimplification\Vertex1.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="spaceship.h" />
     <ClInclude Include="terrain.h" />

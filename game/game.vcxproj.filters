@@ -28,7 +28,18 @@
     <ClCompile Include="enemyspaceship.cpp">
       <Filter>source\game_objects</Filter>
     </ClCompile>
-    <ClCompile Include="enemycontroller.cpp" />
+    <ClCompile Include="bossman.cpp">
+      <Filter>source\game_objects</Filter>
+    </ClCompile>
+    <ClCompile Include="enemycontroller.cpp">
+      <Filter>source\game_objects</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshSimplification\grid.cpp">
+      <Filter>source\game_objects</Filter>
+    </ClCompile>
+    <ClCompile Include="MeshSimplification\mesh.cpp">
+      <Filter>source\game_objects</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -75,7 +86,21 @@
     <ClInclude Include="enemyspaceship.h">
       <Filter>source\game_objects</Filter>
     </ClInclude>
-    <ClInclude Include="enemycontroller.h" />
+    <ClInclude Include="bossman.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
+    <ClInclude Include="enemycontroller.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshSimplification\Vertex1.h">
+      <Filter>source</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshSimplification\grid.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
+    <ClInclude Include="MeshSimplification\mesh.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">

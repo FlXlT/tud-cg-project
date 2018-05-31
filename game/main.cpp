@@ -37,6 +37,8 @@
 
 #include "scene.h"
 #include "geometric_object.h"
+#include "mesh.h"
+#include "grid.h"
 
 // Configuration
 const int WIDTH = 800;
@@ -57,6 +59,8 @@ namespace cameraModes {
 
 // Scene
 Scene scene;
+
+int hitcount;
 
 // Setup a set of cameras
 unsigned int cameraMode = cameraModes::fixed;
@@ -438,7 +442,9 @@ int main() {
 
 			// Render objects
 			std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
-			for (int i = 0; i < geometricObjects.size(); i++) {
+			//for (int i = 0; i < geometricObjects.size(); i++) {
+			for (int i = 0; i < 7; i++) {
+				
 				GeometricObject obj = *geometricObjects[i];
 				glBindVertexArray(obj.vao);
 				if (i == 0) {
@@ -454,6 +460,23 @@ int main() {
 					obj.rotateY(scene.spaceship.weaponRight.angle);
 				}
 
+				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
+				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
+				glDrawArrays(GL_TRIANGLES, 0, obj.size());
+			}
+
+			GeometricObject obj = *geometricObjects[11];
+			glBindVertexArray(obj.vao);
+			glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
+			glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
+			glDrawArrays(GL_TRIANGLES, 0, obj.size());
+
+			hitcount = scene.hitcount;
+
+			// Draw the bawsman
+			if (hitcount < 3) {
+				GeometricObject obj = *geometricObjects[7 + hitcount];
+				glBindVertexArray(obj.vao);
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
 				glDrawArrays(GL_TRIANGLES, 0, obj.size());
@@ -503,7 +526,8 @@ int main() {
 
 		// Render objects
 		std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
-		for (int i = 0; i < geometricObjects.size(); i++) {
+		//for (int i = 0; i < geometricObjects.size(); i++) {
+		for (int i = 0; i < 7; i++) {
 			GeometricObject obj = *geometricObjects[i];
 			glBindVertexArray(obj.vao);
 
@@ -521,6 +545,40 @@ int main() {
 			glUniform1f(glGetUniformLocation(mainProgram, "specularIntensity"), obj.specularIntensity);
 			glUniform1i(glGetUniformLocation(mainProgram, "useTexMaterial"), obj.useTex && useTex);
 		
+			glDrawArrays(GL_TRIANGLES, 0, obj.size());
+		}
+
+		GeometricObject obj = *geometricObjects[11];
+		glBindVertexArray(obj.vao);
+
+		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp * *obj.getModelMatrix()));
+		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
+		glUniform3fv(glGetUniformLocation(mainProgram, "specularColor"), 1, glm::value_ptr(obj.specularColor));
+		glUniform1f(glGetUniformLocation(mainProgram, "specularIntensity"), obj.specularIntensity);
+		glUniform1i(glGetUniformLocation(mainProgram, "useTexMaterial"), obj.useTex);
+
+		glDrawArrays(GL_TRIANGLES, 0, obj.size());
+
+
+		hitcount = scene.hitcount;
+
+		// Draw the bawsman
+		if (hitcount < 3) {
+			GeometricObject obj = *geometricObjects[7 + hitcount];
+			glBindVertexArray(obj.vao);
+
+			obj.translateZ(3);
+			obj.translateY(2);
+			obj.rotateX(45 * atan(1) * 4 / 180);
+			obj.rotateY(atan(1) * 4 / 180);
+			obj.scale(glm::vec3(5,5,5));
+
+			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp * *obj.getModelMatrix()));
+			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
+			glUniform3fv(glGetUniformLocation(mainProgram, "specularColor"), 1, glm::value_ptr(obj.specularColor));
+			glUniform1f(glGetUniformLocation(mainProgram, "specularIntensity"), obj.specularIntensity);
+			glUniform1i(glGetUniformLocation(mainProgram, "useTexMaterial"), obj.useTex);
+
 			glDrawArrays(GL_TRIANGLES, 0, obj.size());
 		}
 
