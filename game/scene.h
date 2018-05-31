@@ -18,6 +18,8 @@ public:
 	Spaceship spaceship;
 	Terrain terrain;
 
+	GeometricObject cursor;
+
 	void build();
 	void generateBufferObjects();
 
