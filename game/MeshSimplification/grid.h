@@ -3,11 +3,11 @@
 
 #include "Vec3D.h"
 #include <vector>
-#include "Vertex.h"
+#include "Vertex1.h"
 #include <map>
 
-typedef std::map<unsigned int, std::vector<Vertex>> CellContent;
-typedef std::map<unsigned int, Vertex> RepresentativeList;
+typedef std::map<unsigned int, std::vector<Vertex1>> CellContent;
+typedef std::map<unsigned int, Vertex1> RepresentativeList;
 
 
 class Grid
@@ -24,7 +24,7 @@ public:
 	//number of grid cells
     unsigned int r;
 	
-	int findGridCoord(const Vertex vert);
+	int findGridCoord(const Vertex1 vert);
 	//position of the grid (min corner is at origin and its extent is defined by size).
     Vec3Df origin;
     float size;
@@ -33,7 +33,7 @@ public:
     //add a point to a cell
 	void addToCell(const Vec3Df & vertexPos);
     //add all vertices of the model to the cells
-	void putVertices(const std::vector<Vertex> & vertices);
+	void putVertices(const std::vector<Vertex1> & vertices);
     //find the index containing the given point, return -1 if it cannot be found
 	int isContainedAt(const Vec3Df & pos);
 

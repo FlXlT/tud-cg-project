@@ -150,7 +150,7 @@ bool Mesh::loadMesh(const char * filename)
         if (strncmp(s, "v ", 2) == 0)
         {
             if (sscanf(s, "v %f %f %f", &x, &y, &z))
-                vertices.push_back(Vertex(Vec3Df(x,y,z)));
+                vertices.push_back(Vertex1(Vec3Df(x,y,z)));
         }
         // face
         else if (strncmp(s, "f ", 2) == 0)
