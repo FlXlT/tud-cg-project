@@ -11,6 +11,8 @@ void Scene::build() {
 	objects.push_back(&terrain);
 
 	enemyController.init();
+	cursor.diffuseColor = glm::vec3(1.0f, 0, 0);
+	cursor.loadFromFile("assets/models/cursor.obj");
 }
 
 std::vector<GeometricObject*> Scene::getGeometricObjects() {
@@ -22,6 +24,8 @@ std::vector<GeometricObject*> Scene::getGeometricObjects() {
 			geometricObjects.push_back(geometry[i]);
 		}
 	}
+
+	geometricObjects.push_back(&cursor);
 
 	return geometricObjects;
 }
@@ -88,4 +92,9 @@ void Scene::update() {
 	terrain.updateGeometry();
 
 	enemyController.update();
+  
+	cursor.clearModelMatrix();
+	//cursor.position.z = spaceship.position.z;
+	cursor.applyPosition();
+	cursor.scale(glm::vec3(0.25f, 0.25f, 0.25f));
 }

@@ -31,6 +31,8 @@ public:
 	glm::vec2 mouseProjection;
 	glm::vec2 spaceshipProjection;
 
+	GeometricObject cursor;
+
 	void build();
 	void generateBufferObjects();
 	void generateLaserBufferObjects();

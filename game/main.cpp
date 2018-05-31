@@ -49,13 +49,23 @@ glm::vec4 screenposSpaceship;
 glm::vec4 screenposWeaponLeft;
 glm::vec4 screenposWeaponRight;
 
+namespace cameraModes {
+	const unsigned int fixed = 0;
+	const unsigned int follow = 1;
+}
+
 // Scene
 Scene scene;
 
 // Setup a set of cameras
+unsigned int cameraMode = cameraModes::fixed;
+glm::vec3 initialCamPos = glm::vec3(0.0f, 0.0f, 10.0f);
+
 std::vector<Camera> cameras;
-// Initialize mainCamera which is visible for the user.
-Camera mainCamera;
+
+Camera firstCamera;
+Camera secondCamera;
+Camera* mainCamera;
 
 // Helper function to read a file like a shader
 std::string readFile(const std::string& path) {
@@ -126,10 +136,27 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 	switch (key)
 	{
 	case GLFW_KEY_1:
-		mainCamera = cameras[0];
+		mainCamera = &cameras[0];
 		break;
 	case GLFW_KEY_2:
-		mainCamera = cameras[1];
+		mainCamera = &cameras[1];
+		break;
+	case GLFW_KEY_R:
+		if (action == GLFW_PRESS && scene.terrain.targetSpeed.y < 0.0f) {
+			scene.terrain.targetSpeed.y = 0.0f;
+		}
+		else if (action == GLFW_PRESS) {
+			scene.terrain.targetSpeed.y = -0.02f;
+		}
+		break;
+	case GLFW_KEY_F:
+		if (action == GLFW_PRESS && cameraMode == cameraModes::fixed) {
+			cameraMode = cameraModes::follow;
+		}
+		else if (action == GLFW_PRESS) {
+			cameraMode = cameraModes::fixed;
+			firstCamera.position = initialCamPos;
+		}
 		break;
 	default:
 		break;
@@ -146,9 +173,8 @@ void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
 	scene.mouseProjection = glm::vec2(((xpos*10) / (WIDTH)) - 5, ((ypos * 10) / (HEIGHT)) - 5);
-	mouseXcoord = (float) ((xpos*3.7)/(WIDTH)) - 1.2;
-	mouseYcoord = (float) ((ypos*5)/(HEIGHT)) - 2.5;
-	//camCursorPosHandler(xpos, ypos);	
+	mouseXcoord = xpos;
+	mouseYcoord = ypos;
 }
 
 
@@ -307,7 +333,6 @@ int main() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	/////////////////// Create main camera
-	Camera firstCamera;
 	firstCamera.aspect = WIDTH / (float)HEIGHT;
 	firstCamera.position = glm::vec3(0.0f, 0.0f, 10.0f);
 	firstCamera.forward  = -firstCamera.position; // point to origin
@@ -315,23 +340,46 @@ int main() {
 	cameras.push_back(firstCamera);
 
 	/////////////////// Create second camera for shadow mapping
-	Camera secondCamera;
 	secondCamera.aspect = WIDTH / (float)HEIGHT;
-	secondCamera.position = glm::vec3(-1.0f, 1.0f, 15.0f);
+	secondCamera.position = glm::vec3(0, 0, 15.0f);
 	secondCamera.forward  = -secondCamera.position;
-	secondCamera.up = glm::vec3(0.0f, 0.0f, 1.0f);
+	secondCamera.up = glm::vec3(-1.0f, 1.0f, 1.0f);
 	cameras.push_back(secondCamera);
 
 	// Assign the first camera as the main viewport
 	// The other cameras are mainly for shadow mapping
-	mainCamera = firstCamera;
+	mainCamera = &firstCamera;
 
 	// Main loop
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 
+		glm::mat4 mvp = mainCamera->vpMatrix();
+		glm::mat4 imvp = inverse(mvp);
+
+		// mouse coords from -1 to 1
+		const float mouseX = 2 * mouseXcoord / WIDTH - 1;
+		const float mouseY = -(2 * mouseYcoord / HEIGHT - 1);
+
+		glm::vec4 spaceshipScreenPos = mvp * glm::vec4(scene.spaceship.position, 1.0f);
+		spaceshipScreenPos = glm::vec4(spaceshipScreenPos * glm::vec4(1.0f / spaceshipScreenPos.w));
+
+		// mouse screen pos
+		glm::vec4 mouseScreenPos = { mouseX, mouseY, spaceshipScreenPos.z, 1.0f };
+
+		// mouse world pos
+		glm::vec4 mouseWorldPos = imvp * mouseScreenPos;
+
+		scene.cursor.position = glm::vec3(mouseWorldPos / glm::vec4(mouseWorldPos.w));
+
+		scene.update();
+
+		if (cameraMode == cameraModes::follow) {
+			firstCamera.position = scene.spaceship.position + glm::vec3(0, 0, 2.0f);
+		}
+
 		// Model/view/projection matrix from the point of view of the mainCamera and shadowCamera
-		glm::mat4 mvp = mainCamera.vpMatrix();
+		mvp = mainCamera->vpMatrix();
 		glm::mat4 lightMVP = secondCamera.vpMatrix();
 
 		float angleWeaponLeft = 0;
@@ -385,10 +433,10 @@ int main() {
 
 		// Bind the shader
 		glUseProgram(mainProgram);
-		updateCamera(mainCamera);
+		updateCamera(*mainCamera);
 
 		glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp));
-		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera.position)); // Set view
+		glUniform3fv(glGetUniformLocation(mainProgram, "viewPos"), 1, glm::value_ptr(mainCamera->position)); // Set view
 		glUniform1f(glGetUniformLocation(mainProgram, "time"), static_cast<float>(glfwGetTime())); // Expose current time in shader uniform
 
 		// Set MVP from the perspective of the shadow camera
@@ -420,8 +468,6 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glDisable(GL_CULL_FACE);
 		glEnable(GL_DEPTH_TEST);
-
-		scene.update();
 
 		// Render objects
 		std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
