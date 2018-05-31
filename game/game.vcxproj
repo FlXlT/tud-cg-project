@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="bossman.cpp" />
     <ClCompile Include="enemycontroller.cpp" />
     <ClCompile Include="enemyspaceship.cpp" />
     <ClCompile Include="game_object.cpp" />
@@ -29,6 +30,7 @@
     <None Include="shadow.vert" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bossman.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="enemycontroller.h" />
     <ClInclude Include="enemyspaceship.h" />

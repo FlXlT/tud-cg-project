@@ -8,6 +8,7 @@
 #include "laser.h"
 #include "terrain.h"
 #include "enemycontroller.h"
+#include "bossman.h"
 
 class Scene {
 	bool		leftMousePressed = false;
@@ -23,6 +24,7 @@ public:
 	std::vector<GeometricObject*> getGeometricObjects();
 
 	Spaceship spaceship;
+	bossman bowsman;
 	GeometricObject laser1;
 	GeometricObject laser2;
 	GeometricObject weaponLeft;

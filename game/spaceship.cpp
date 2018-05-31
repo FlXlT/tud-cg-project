@@ -57,7 +57,7 @@ std::vector<GeometricObject*> Spaceship::getGeometry() {
 }
 
 void Spaceship::shootLaser(glm::vec2 mouseProjection, glm::vec2 spaceshipProjection) {
-
+	
 	float dir_x = mouseProjection[0] - spaceshipProjection[0]; // +weaponLeft.position[0];
 	float dir_y = -1 * mouseProjection[1] - spaceshipProjection[1]; //+ weaponLeft.position[1];
 	float length = sqrt(dir_x*dir_x + dir_y * dir_y);

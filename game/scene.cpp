@@ -10,6 +10,9 @@ void Scene::build() {
 	terrain.buildGeometry();
 	objects.push_back(&terrain);
 
+	bowsman.buildGeometry();
+	objects.push_back(&bowsman);
+
 	enemyController.init();
 	cursor.diffuseColor = glm::vec3(1.0f, 0, 0);
 	cursor.loadFromFile("assets/models/cursor.obj");

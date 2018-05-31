@@ -29,6 +29,7 @@
       <Filter>source\game_objects</Filter>
     </ClCompile>
     <ClCompile Include="enemycontroller.cpp" />
+    <ClCompile Include="bossman.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -76,6 +77,7 @@
       <Filter>source\game_objects</Filter>
     </ClInclude>
     <ClInclude Include="enemycontroller.h" />
+    <ClInclude Include="bossman.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">
