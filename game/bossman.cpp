@@ -102,8 +102,13 @@ void bossman::updateGeometry() {
 
 GeometricObject bossman::MeshToGeometricObject(Mesh meshToGeo) {
 	Vertex temp_vertex = {};
+	GeometricObject convertedBoss = {};
 	for(int i=0;meshToGeo.triangles.size();i++) {
-		temp_vertex = {};
+		temp_vertex1 = {};
+		temp_vertex2 = {};
+		temp_vertex3 = {};
+
+
 		temp_vertex1.pos[0] = meshToGeo.vertices[meshToGeo.triangles[i].v[0]].p[0];
 		temp_vertex1.pos[1] = meshToGeo.vertices[meshToGeo.triangles[i].v[0]].p[1];
 		temp_vertex1.pos[2] = meshToGeo.vertices[meshToGeo.triangles[i].v[0]].p[2];
@@ -132,10 +137,11 @@ GeometricObject bossman::MeshToGeometricObject(Mesh meshToGeo) {
 		temp_vertex2.color = diffuseColor;
 		temp_vertex3.color = diffuseColor;
 
-		vertices.push_back(temp_vertex1);
-		vertices.push_back(temp_vertex2);
-		vertices.push_back(temp_vertex3);
+		convertedBoss.vertices.push_back(temp_vertex1);
+		convertedBoss.vertices.push_back(temp_vertex2);
+		convertedBoss.vertices.push_back(temp_vertex3);
 	}
+	return convertedBoss;
 }
 
 std::vector<GeometricObject*> bossman::getGeometry() {
