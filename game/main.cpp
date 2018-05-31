@@ -52,6 +52,7 @@ glm::vec4 screenposWeaponRight;
 namespace cameraModes {
 	const unsigned int fixed = 0;
 	const unsigned int follow = 1;
+	const unsigned int side = 2;
 }
 
 // Scene
@@ -60,12 +61,15 @@ Scene scene;
 // Setup a set of cameras
 unsigned int cameraMode = cameraModes::fixed;
 glm::vec3 initialCamPos = glm::vec3(0.0f, 0.0f, 10.0f);
+glm::vec3 initialCamUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
 std::vector<Camera> cameras;
 
 Camera firstCamera;
 Camera secondCamera;
 Camera* mainCamera;
+
+bool useTex = true;
 
 // Helper function to read a file like a shader
 std::string readFile(const std::string& path) {
@@ -150,12 +154,39 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 		}
 		break;
 	case GLFW_KEY_F:
-		if (action == GLFW_PRESS && cameraMode == cameraModes::fixed) {
+		if (action == GLFW_PRESS && cameraMode != cameraModes::follow) {
 			cameraMode = cameraModes::follow;
+			firstCamera.position = initialCamPos;
+			firstCamera.up = initialCamUp;
+			firstCamera.forward = -firstCamera.position;
 		}
 		else if (action == GLFW_PRESS) {
 			cameraMode = cameraModes::fixed;
 			firstCamera.position = initialCamPos;
+			firstCamera.up = initialCamUp;
+			firstCamera.forward = -firstCamera.position;
+		}
+		break;
+	case GLFW_KEY_C:
+		if (action == GLFW_PRESS && cameraMode != cameraModes::side) {
+			cameraMode = cameraModes::side;
+			firstCamera.position = glm::vec3(-15.0f, 0.0f, 0.0f);
+			firstCamera.up = glm::vec3(0.0f, 0.0f, 1.0f);
+			firstCamera.forward = -firstCamera.position;
+		}
+		else if (action == GLFW_PRESS) {
+			cameraMode = cameraModes::fixed;
+			firstCamera.position = initialCamPos;
+			firstCamera.up = initialCamUp;
+			firstCamera.forward = -firstCamera.position;
+		}
+		break;
+	case GLFW_KEY_T:
+		if (action == GLFW_PRESS && !useTex) {
+			useTex = true;
+		}
+		else if (action == GLFW_PRESS) {
+			useTex = false;
 		}
 		break;
 	default:
@@ -336,9 +367,9 @@ int main() {
 
 	/////////////////// Create main camera
 	firstCamera.aspect = WIDTH / (float)HEIGHT;
-	firstCamera.position = glm::vec3(0.0f, 0.0f, 10.0f);
+	firstCamera.position = initialCamPos;
 	firstCamera.forward  = -firstCamera.position; // point to origin
-	firstCamera.up = glm::vec3(0.0f, 1.0f, 0.0f);
+	firstCamera.up = initialCamUp;
 	cameras.push_back(firstCamera);
 
 	/////////////////// Create second camera for shadow mapping
@@ -378,6 +409,7 @@ int main() {
 
 		if (cameraMode == cameraModes::follow) {
 			firstCamera.position = scene.spaceship.position + glm::vec3(0, 0, 2.0f);
+			firstCamera.forward = scene.spaceship.position - firstCamera.position;
 		}
 
 		// Model/view/projection matrix from the point of view of the mainCamera and shadowCamera
@@ -486,7 +518,7 @@ int main() {
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
 			glUniform3fv(glGetUniformLocation(mainProgram, "specularColor"), 1, glm::value_ptr(obj.specularColor));
 			glUniform1f(glGetUniformLocation(mainProgram, "specularIntensity"), obj.specularIntensity);
-			glUniform1i(glGetUniformLocation(mainProgram, "useTexMaterial"), obj.useTex);
+			glUniform1i(glGetUniformLocation(mainProgram, "useTexMaterial"), obj.useTex && useTex);
 		
 			glDrawArrays(GL_TRIANGLES, 0, obj.size());
 		}
