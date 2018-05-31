@@ -42,6 +42,8 @@
 const int WIDTH = 800;
 const int HEIGHT = 600;
 
+int hitcount = scene.hitcount;
+
 float mouseXcoord = 0;
 float mouseYcoord = 0;
 
@@ -406,7 +408,9 @@ int main() {
 
 			// Render objects
 			std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
-			for (int i = 0; i < geometricObjects.size(); i++) {
+			//for (int i = 0; i < geometricObjects.size(); i++) {
+			for (int i = 0; i < 6; i++) {
+				
 				GeometricObject obj = *geometricObjects[i];
 				glBindVertexArray(obj.vao);
 				if (i == 0) {
@@ -422,6 +426,15 @@ int main() {
 					obj.rotateY(scene.spaceship.weaponRight.angle);
 				}
 
+				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
+				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
+				glDrawArrays(GL_TRIANGLES, 0, obj.size());
+			}
+
+			// Draw the bawsman
+			if (hitcount < 4) {
+				GeometricObject obj = *geometricObjects[6+hitcount];
+				glBindVertexArray(obj.vao);
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));
 				glDrawArrays(GL_TRIANGLES, 0, obj.size());

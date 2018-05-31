@@ -13,11 +13,12 @@
 class Scene {
 	bool		leftMousePressed = false;
 	bool		before = false;
-	int			hitcount;
+	
 
 	std::time_t lastTimeShot = std::time(0);
 	
 public:
+	int	hitcount;
 
 	std::vector<GameObject*> objects;
 

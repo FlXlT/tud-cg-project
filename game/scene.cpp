@@ -13,7 +13,7 @@ void Scene::build() {
 	bowsman.buildGeometry();
 	objects.push_back(&bowsman);
 
-	enemyController.init();
+	//enemyController.init();
 	cursor.diffuseColor = glm::vec3(1.0f, 0, 0);
 	cursor.loadFromFile("assets/models/cursor.obj");
 }
@@ -108,3 +108,5 @@ void Scene::update() {
 	cursor.applyPosition();
 	cursor.scale(glm::vec3(0.25f, 0.25f, 0.25f));
 }
+
+
