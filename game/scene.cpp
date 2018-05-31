@@ -38,9 +38,12 @@ void Scene::generateBufferObjects() {
 }
 
 void Scene::generateLaserBufferObjects() {
-	std::vector<GeometricObject*> geometricObjects = getGeometricObjects();
-	(*geometricObjects[2]).generateBufferObjects();
-	(*geometricObjects[4]).generateBufferObjects();
+	if (!before) {
+		std::vector<GeometricObject*> geometricObjects = getGeometricObjects();
+		(*geometricObjects[2]).generateBufferObjects();
+		(*geometricObjects[4]).generateBufferObjects();
+		before = true;
+	}
 }
 
 void Scene::generateEnemyBufferObjects() {
@@ -92,7 +95,7 @@ void Scene::update() {
 	terrain.updateGeometry();
 
 	enemyController.update();
-  
+
 	cursor.clearModelMatrix();
 	//cursor.position.z = spaceship.position.z;
 	cursor.applyPosition();

@@ -9,6 +9,8 @@ void Laser::attachToWeapon(GameObject* w) {
 
 void Laser::buildGeometry() {
 	body.loadFromFile("laser.obj");
+	body.diffuseColor = glm::vec3(1.0f, 0, 0);
+	body.scale(glm::vec3(0.25f, 0.25f, 0.25f));
 	targetSpeed.x = 0.0;
 	targetSpeed.y = 0.0;
 	speed.x = 0.0;
@@ -28,7 +30,8 @@ void Laser::updateGeometry(){
 		body.clearModelMatrix();
 		body.position = position;
 		body.applyPosition();
-		body.scale(size);
+		body.diffuseColor = glm::vec3(1.0f, 0, 0);
+		body.scale(glm::vec3(0.25f, 0.25f, 0.25f));
 		update();
 	}
 }

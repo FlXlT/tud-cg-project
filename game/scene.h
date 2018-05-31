@@ -11,6 +11,7 @@
 
 class Scene {
 	bool      leftMousePressed = false;
+	bool		before = false;
 	std::time_t lastTimeShot = std::time(0);
 	
 public:
