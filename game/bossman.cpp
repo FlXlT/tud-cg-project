@@ -148,9 +148,9 @@ GeometricObject bossman::MeshToGeometricObject(Mesh meshToGeo) {
 			meshToGeo.vertices[meshToGeo.triangles[i].v[2]].n[2]
 		};
 
-		temp_vertex1.color = glm::vec3(0.0, 0.0, 0.0);
-		temp_vertex2.color = glm::vec3(0.0, 0.0, 0.0);
-		temp_vertex3.color = glm::vec3(0.0, 0.0, 0.0);
+		temp_vertex1.color = glm::vec3(0.25, 0.25, 0.25);
+		temp_vertex2.color = glm::vec3(0.25, 0.25, 0.25);
+		temp_vertex3.color = glm::vec3(0.25, 0.25, 0.25);
 
 		convertedBoss.vertices.push_back(temp_vertex1);
 		convertedBoss.vertices.push_back(temp_vertex2);

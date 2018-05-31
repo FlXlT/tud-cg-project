@@ -536,8 +536,8 @@ int main() {
 			glBindVertexArray(obj.vao);
 
 			obj.translateZ(3);
-			obj.translateY(-2);
-			obj.rotateX(90 * atan(1) * 4 / 180);
+			obj.translateY(2);
+			obj.rotateX(45 * atan(1) * 4 / 180);
 			obj.rotateY(atan(1) * 4 / 180);
 
 			glUniformMatrix4fv(glGetUniformLocation(mainProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(mvp * *obj.getModelMatrix()));
