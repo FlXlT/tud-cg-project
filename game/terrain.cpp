@@ -2,7 +2,7 @@
 
 void Terrain::buildGeometry() {
 	body.diffuseColor = { 133.0f / 255.0f, 104.0f / 255.0f, 238.0f / 255.0f };
-	body.generateSurface(surface_modes::sinusoidal, 20, 20, 1.5f, 60, 60, 15, 15, 4, 4);
+	body.generateSurface(surface_modes::sinusoidal, 20, 20, 1.5f, 40, 40, 15, 15, 4, 4);
 	body.specularColor = { 0, 0, 0 };
 	body.specularIntensity = 0;
 	body.useTex = true;

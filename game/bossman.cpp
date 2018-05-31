@@ -75,7 +75,6 @@ Mesh bossman::simplifyMesh(unsigned int r, Mesh mesh) {
 void bossman::buildGeometry()
 {
 	body.position = glm::vec3(0.0f,2.0f, 5.0f);
-	body.diffuseColor = glm::vec3(0.75f, 0.75f, 0.75f);
 	mesh.loadMesh("assets/models/baws2.obj");
 	simplified = simplifyMesh(128,mesh);
 	convertedSimpleMesh128 = MeshToGeometricObject(simplified);
@@ -148,9 +147,10 @@ GeometricObject bossman::MeshToGeometricObject(Mesh meshToGeo) {
 			meshToGeo.vertices[meshToGeo.triangles[i].v[2]].n[2]
 		};
 
-		temp_vertex1.color = glm::vec3(0.25, 0.25, 0.25);
-		temp_vertex2.color = glm::vec3(0.25, 0.25, 0.25);
-		temp_vertex3.color = glm::vec3(0.25, 0.25, 0.25);
+		glm::vec3 col = glm::vec3(52.0f / 255, 181.0f / 255, 23.0f / 255); 
+		temp_vertex1.color = col;
+		temp_vertex2.color = col;
+		temp_vertex3.color = col;
 
 		convertedBoss.vertices.push_back(temp_vertex1);
 		convertedBoss.vertices.push_back(temp_vertex2);
