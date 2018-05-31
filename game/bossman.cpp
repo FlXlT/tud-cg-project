@@ -74,6 +74,7 @@ Mesh bossman::simplifyMesh(unsigned int r, Mesh mesh) {
 
 void bossman::buildGeometry()
 {
+	body.position = glm::vec3(0.0f,2.0f, 5.0f);
 	body.diffuseColor = glm::vec3(0.75f, 0.75f, 0.75f);
 	mesh.loadMesh("dodge.obj");
 	simplified = simplifyMesh(128,mesh);
@@ -88,7 +89,13 @@ void bossman::buildGeometry()
 }
 
 void bossman::updateGeometry() {
+	float angleX = 90 * atan(1) * 4 / 180;
+	float angleY = 180 * atan(1) * 4 / 180;
 
+	body.clearModelMatrix();
+	body.position = position;
+	body.applyPosition();
+	body.translate(glm::vec3(0.0f, -1.0f, 0.0f));
 }
 
 GeometricObject bossman::MeshToGeometricObject(Mesh meshToGeo) {
@@ -154,12 +161,18 @@ GeometricObject bossman::MeshToGeometricObject(Mesh meshToGeo) {
 
 std::vector<GeometricObject*> bossman::getGeometry() {
 	std::vector<GeometricObject*> geometry;
+	std::vector<GeometricObject*> g1;
+	std::vector<GeometricObject*> g2;
+	std::vector<GeometricObject*> g3;
 
 	geometry.push_back(&body);
 	geometry.push_back(&convertedSimpleMesh128);
-	geometry.push_back(&convertedSimpleMesh64);
-	geometry.push_back(&convertedSimpleMesh32);
-	geometry.push_back(&convertedSimpleMesh16);
+	g1.push_back(&convertedSimpleMesh64);
+	geometry.insert(geometry.end(), g1.begin(), g1.end());
+	g2.push_back(&convertedSimpleMesh32);
+	geometry.insert(geometry.end(), g2.begin(), g2.end());
+	g3.push_back(&convertedSimpleMesh16);
+	geometry.insert(geometry.end(), g3.begin(), g3.end());
 
 	return geometry;
 }

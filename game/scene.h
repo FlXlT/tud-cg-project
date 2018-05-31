@@ -18,7 +18,7 @@ class Scene {
 	std::time_t lastTimeShot = std::time(0);
 	
 public:
-	int	hitcount;
+	int	hitcount = 0;
 
 	std::vector<GameObject*> objects;
 
