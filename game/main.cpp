@@ -167,16 +167,14 @@ void keyboardHandler(GLFWwindow* window, int key, int scancode, int action, int 
 void mouseButtonHandler(GLFWwindow* window, int button, int action, int mods)
 {
 	camMouseButtonHandler(button, action);
+	scene.sceneMouseButtonHandler(button, action, mouseXcoord, mouseYcoord);
 }
 
 void cursorPosHandler(GLFWwindow* window, double xpos, double ypos)
 {
-	//mouseXcoord = (float) ((xpos*10)/(WIDTH)) - 5;
-	//mouseYcoord = (float) ((ypos*10)/(HEIGHT)) - 5;
-
+	scene.mouseProjection = glm::vec2(((xpos*10) / (WIDTH)) - 5, ((ypos * 10) / (HEIGHT)) - 5);
 	mouseXcoord = xpos;
 	mouseYcoord = ypos;
-	//camCursorPosHandler(xpos, ypos);
 }
 
 
@@ -203,9 +201,9 @@ int main() {
 	}
 
 	glfwSetKeyCallback(window, keyboardHandler);
-	glfwSetMouseButtonCallback(window, mouseButtonHandler);
 	glfwSetCursorPosCallback(window, cursorPosHandler);
-
+	glfwSetMouseButtonCallback(window, mouseButtonHandler);
+	
 	// Activate the OpenGL context
 	glfwMakeContextCurrent(window);
 
@@ -411,13 +409,16 @@ int main() {
 			for (int i = 0; i < geometricObjects.size(); i++) {
 				GeometricObject obj = *geometricObjects[i];
 				glBindVertexArray(obj.vao);
-
+				if (i == 0) {
+					glm::vec4 tempVec = mvp * glm::vec4(obj.position,1.0);
+					scene.spaceshipProjection = glm::vec2(tempVec[0], tempVec[1]);
+				}
 				if (i == 1) {
-					scene.spaceship.weaponLeft.updateAngle(mvp, obj, mouseXcoord, mouseYcoord);
+					scene.spaceship.weaponLeft.updateAngle(mvp, obj, scene.mouseProjection[0], scene.mouseProjection[1]);
 					obj.rotateY(scene.spaceship.weaponLeft.angle);
 				}
-				if (i == 2) {
-					scene.spaceship.weaponRight.updateAngle(mvp, obj, mouseXcoord, mouseYcoord);
+				if (i == 3) {
+					scene.spaceship.weaponRight.updateAngle(mvp, obj, scene.mouseProjection[0], scene.mouseProjection[1]);
 					obj.rotateY(scene.spaceship.weaponRight.angle);
 				}
 
@@ -478,7 +479,7 @@ int main() {
 			if (i == 1) {
 				obj.rotateY(scene.spaceship.weaponLeft.angle);
 			}
-			if (i == 2) {
+			if (i == 3) {
 				obj.rotateY(scene.spaceship.weaponRight.angle);
 			}
 

@@ -11,11 +11,14 @@ public:
 	Weapon weaponLeft;
 	Weapon weaponRight;
 
+	float velocityLasers = 0.1;
+
 	Spaceship();
 
 	void buildGeometry();
 	void updateGeometry();
 	std::vector<GeometricObject*> getGeometry();
+	void Spaceship::shootLaser(glm::vec2 mouseProjection, glm::vec2 spaceshipProjection);
 
 	bool collidesLeft();
 	bool collidesRight();

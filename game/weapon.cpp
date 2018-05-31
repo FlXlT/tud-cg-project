@@ -24,11 +24,31 @@ void Weapon::updateGeometry() {
 	body.applyPosition();
 	body.rotateX(angleY);
 	body.scale(size);	
+	laserBeam.updateGeometry();
+}
+
+void Weapon::shootLaser(float x_direction, float y_direction) {
+	laserBeam.attachToWeapon(this);
+	laserBeam.position = glm::vec3(0.0f, 0.0f, 0.0f);
+	laserBeam.buildGeometry();
+	laserBeam.targetSpeed.x = x_direction;
+	laserBeam.targetSpeed.z = y_direction;
+	laserBeam.updateGeometry();
+
+	updateGeometry();
 }
 
 std::vector<GeometricObject*> Weapon::getGeometry() {
 	std::vector<GeometricObject*> geometry;
+	std::vector<GeometricObject*> g;
+	
+	// Add own body
 	geometry.push_back(&body);
+
+	// Add geometry of laser
+	g = laserBeam.getGeometry();
+	geometry.insert(geometry.end(), g.begin(), g.end());
+
 	return geometry;
 }
 

@@ -19,9 +19,16 @@
     <ClCompile Include="weapon.cpp">
       <Filter>source\game_objects</Filter>
     </ClCompile>
+    <ClCompile Include="laser.cpp">
+      <Filter>source\game_objects</Filter>
+    </ClCompile>
     <ClCompile Include="terrain.cpp">
       <Filter>source\game_objects</Filter>
     </ClCompile>
+    <ClCompile Include="enemyspaceship.cpp">
+      <Filter>source\game_objects</Filter>
+    </ClCompile>
+    <ClCompile Include="enemycontroller.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shader.frag">
@@ -59,9 +66,16 @@
     <ClInclude Include="weapon.h">
       <Filter>source\game_objects</Filter>
     </ClInclude>
+    <ClInclude Include="laser.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
     <ClInclude Include="terrain.h">
       <Filter>source\game_objects</Filter>
     </ClInclude>
+    <ClInclude Include="enemyspaceship.h">
+      <Filter>source\game_objects</Filter>
+    </ClInclude>
+    <ClInclude Include="enemycontroller.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="shaders">

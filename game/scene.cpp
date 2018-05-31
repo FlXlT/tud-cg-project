@@ -10,6 +10,7 @@ void Scene::build() {
 	terrain.buildGeometry();
 	objects.push_back(&terrain);
 
+	enemyController.init();
 	cursor.diffuseColor = glm::vec3(1.0f, 0, 0);
 	cursor.loadFromFile("assets/models/cursor.obj");
 }
@@ -36,6 +37,23 @@ void Scene::generateBufferObjects() {
 	}
 }
 
+void Scene::generateLaserBufferObjects() {
+	if (!before) {
+		std::vector<GeometricObject*> geometricObjects = getGeometricObjects();
+		(*geometricObjects[2]).generateBufferObjects();
+		(*geometricObjects[4]).generateBufferObjects();
+		before = true;
+	}
+}
+
+void Scene::generateEnemyBufferObjects() {
+	std::vector<GeometricObject*> geometricObjects = getGeometricObjects();
+	for (int i = 0; i < enemyController.amountEnemies; i++)
+	{
+		(*geometricObjects[5 + i]).generateBufferObjects();
+	}
+}
+
 void Scene::handleKey(int key, int action) {
 	switch (key) {
 	case GLFW_KEY_A:
@@ -57,12 +75,26 @@ void Scene::handleKey(int key, int action) {
 	}
 }
 
+// Mouse button handle function
+void Scene::sceneMouseButtonHandler(int button, int action, float mouseXcoord, float mouseYcoord)
+{
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+		if (lastTimeShot + 1 < std::time(nullptr)) { // Only possible to shoot one time per second
+			spaceship.shootLaser(mouseProjection, spaceshipProjection);
+			generateLaserBufferObjects(); 
+			lastTimeShot = std::time(nullptr);
+		}
+	}
+}
+
 void Scene::update() {
 	spaceship.update();
 	spaceship.updateGeometry();
 
 	terrain.update();
 	terrain.updateGeometry();
+
+	enemyController.update();
 
 	cursor.clearModelMatrix();
 	//cursor.position.z = spaceship.position.z;
