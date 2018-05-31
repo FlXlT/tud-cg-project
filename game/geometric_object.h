@@ -35,9 +35,6 @@ namespace surface_modes {
 }
 
 class GeometricObject {
-	// List of vertices that constitute the geometric representation of this object
-	std::vector<Vertex> vertices;
-
 	// The model matrix for this object
 	glm::mat4 model;
 	glm::mat4 completeModel;
@@ -49,6 +46,8 @@ class GeometricObject {
 	std::vector<tinyobj::material_t> materials;
 
 public:
+	// List of vertices that constitute the geometric representation of this object
+	std::vector<Vertex> vertices;
 
 	// Parent geometric object to which this object is "attached"
 	GeometricObject * parent;

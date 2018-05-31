@@ -37,12 +37,12 @@
 
 #include "scene.h"
 #include "geometric_object.h"
+#include "mesh.h"
+#include "grid.h"
 
 // Configuration
 const int WIDTH = 800;
 const int HEIGHT = 600;
-
-int hitcount = scene.hitcount;
 
 float mouseXcoord = 0;
 float mouseYcoord = 0;
@@ -58,6 +58,8 @@ namespace cameraModes {
 
 // Scene
 Scene scene;
+
+int hitcount;
 
 // Setup a set of cameras
 unsigned int cameraMode = cameraModes::fixed;
@@ -409,7 +411,7 @@ int main() {
 			// Render objects
 			std::vector<GeometricObject*> geometricObjects = scene.getGeometricObjects();
 			//for (int i = 0; i < geometricObjects.size(); i++) {
-			for (int i = 0; i < 6; i++) {
+			for (int i = 0; i < 5; i++) {
 				
 				GeometricObject obj = *geometricObjects[i];
 				glBindVertexArray(obj.vao);
@@ -431,9 +433,12 @@ int main() {
 				glDrawArrays(GL_TRIANGLES, 0, obj.size());
 			}
 
+			hitcount = scene.hitcount;
+
 			// Draw the bawsman
 			if (hitcount < 4) {
-				GeometricObject obj = *geometricObjects[6+hitcount];
+				std::cout << hitcount << std::endl;
+				GeometricObject obj = *geometricObjects[5+hitcount];
 				glBindVertexArray(obj.vao);
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "mvp"), 1, GL_FALSE, glm::value_ptr(lightMVP * *obj.getModelMatrix()));
 				glUniformMatrix4fv(glGetUniformLocation(shadowProgram, "model"), 1, GL_FALSE, glm::value_ptr(*obj.getModelMatrix()));

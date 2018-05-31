@@ -1,14 +1,6 @@
 
-#ifdef WIN32
-#include <windows.h>
-#endif
 #include "bossman.h"
-#include <stdlib.h>
-#include <math.h>
-#include <assert.h>
-#include "mesh.h"
-#include "grid.h"
-	
+
 Mesh mesh; //Main mesh
 Mesh simplified; //simplified mesh - to be built by you
 Grid grid; //voxel grid to be filled by you
@@ -29,11 +21,11 @@ Mesh bossman::simplifyMesh(unsigned int r, Mesh mesh) {
 	grid.computeRepresentatives();	
 
 	//work with a local reference	
-    	const vector<Vertex1> & vertices = mesh.vertices;
-    	const vector<Triangle> & triangles = mesh.triangles;
+    	const std::vector<Vertex1> & vertices = mesh.vertices;
+    	const std::vector<Triangle> & triangles = mesh.triangles;
 
   std::map<unsigned int, unsigned int > newIndexRemapping;
-  vector<Vertex1> simplifiedVertices;
+  std::vector<Vertex1> simplifiedVertices;
 
     int count = 0;
     for(RepresentativeList::iterator it = grid.representatives.begin() ; it != grid.representatives.end (); it++, count++){
@@ -43,7 +35,7 @@ Mesh bossman::simplifyMesh(unsigned int r, Mesh mesh) {
     }
 
   //triangles 'n' stuff
-  vector<Triangle> simplifiedTriangles;
+  std::vector<Triangle> simplifiedTriangles;
 
 	for(int x=0;x<triangles.size();x++) {
 		//retrieve vertices corresponding to the indices listed in the triangles entry
@@ -83,8 +75,7 @@ Mesh bossman::simplifyMesh(unsigned int r, Mesh mesh) {
 void bossman::buildGeometry()
 {
 	body.diffuseColor = glm::vec3(0.75f, 0.75f, 0.75f);
-	//body.loadFromFile("spaceship.obj");   // LOAD FROM MESH :)
-	mesh.loadMesh("spaceship.obj");
+	mesh.loadMesh("dodge.obj");
 	simplified = simplifyMesh(128,mesh);
 	convertedSimpleMesh128 = MeshToGeometricObject(simplified);
 	simplified = simplifyMesh(64,mesh);
@@ -101,41 +92,58 @@ void bossman::updateGeometry() {
 }
 
 GeometricObject bossman::MeshToGeometricObject(Mesh meshToGeo) {
-	Vertex temp_vertex = {};
+	Vertex temp_vertex1 = {};
+	Vertex temp_vertex2 = {};
+	Vertex temp_vertex3 = {};
 	GeometricObject convertedBoss = {};
-	for(int i=0;meshToGeo.triangles.size();i++) {
+
+	for(int i=0; i < meshToGeo.triangles.size(); i++) {
 		temp_vertex1 = {};
 		temp_vertex2 = {};
 		temp_vertex3 = {};
 
+		// POSTIONS
+		temp_vertex1.pos = {
+			meshToGeo.vertices[meshToGeo.triangles[i].v[0]].p[0],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[0]].p[1],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[0]].p[2]
+		};
 
-		temp_vertex1.pos[0] = meshToGeo.vertices[meshToGeo.triangles[i].v[0]].p[0];
-		temp_vertex1.pos[1] = meshToGeo.vertices[meshToGeo.triangles[i].v[0]].p[1];
-		temp_vertex1.pos[2] = meshToGeo.vertices[meshToGeo.triangles[i].v[0]].p[2];
+		temp_vertex2.pos = {
+			meshToGeo.vertices[meshToGeo.triangles[i].v[1]].p[0],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[1]].p[1],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[1]].p[2]
+		};
 
-		temp_vertex2.pos[0] = meshToGeo.vertices[meshToGeo.triangles[i].v[1]].p[0];
-		temp_vertex2.pos[1] = meshToGeo.vertices[meshToGeo.triangles[i].v[1]].p[1];
-		temp_vertex2.pos[2] = meshToGeo.vertices[meshToGeo.triangles[i].v[1]].p[2];
+		temp_vertex3.pos = {
+			meshToGeo.vertices[meshToGeo.triangles[i].v[2]].p[0],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[2]].p[1],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[2]].p[2]
+		};
 
-		temp_vertex3.pos[0] = meshToGeo.vertices[meshToGeo.triangles[i].v[2]].p[0];
-		temp_vertex3.pos[1] = meshToGeo.vertices[meshToGeo.triangles[i].v[2]].p[1];
-		temp_vertex3.pos[2] = meshToGeo.vertices[meshToGeo.triangles[i].v[2]].p[2];
 
-		temp_vertex1.normal[0] = meshToGeo.vertices[meshToGeo.triangles[i].v[0]].n[0];
-		temp_vertex1.normal[1] = meshToGeo.vertices[meshToGeo.triangles[i].v[0]].n[1];
-		temp_vertex1.normal[2] = meshToGeo.vertices[meshToGeo.triangles[i].v[0]].n[2];
+		// NORMALS
+		temp_vertex1.normal = {
+			meshToGeo.vertices[meshToGeo.triangles[i].v[0]].n[0],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[0]].n[1],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[0]].n[2]
+		};
 
-		temp_vertex1.normal[0] = meshToGeo.vertices[meshToGeo.triangles[i].v[1]].n[0];
-		temp_vertex1.normal[1] = meshToGeo.vertices[meshToGeo.triangles[i].v[1]].n[1];
-		temp_vertex1.normal[2] = meshToGeo.vertices[meshToGeo.triangles[i].v[1]].n[2];
+		temp_vertex2.normal = {
+			meshToGeo.vertices[meshToGeo.triangles[i].v[1]].n[0],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[1]].n[1],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[1]].n[2]
+		};
 
-		temp_vertex1.normal[0] = meshToGeo.vertices[meshToGeo.triangles[i].v[2]].n[0];
-		temp_vertex1.normal[1] = meshToGeo.vertices[meshToGeo.triangles[i].v[2]].n[1];
-		temp_vertex1.normal[2] = meshToGeo.vertices[meshToGeo.triangles[i].v[2]].n[2];
+		temp_vertex3.normal = {
+			meshToGeo.vertices[meshToGeo.triangles[i].v[2]].n[0],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[2]].n[1],
+			meshToGeo.vertices[meshToGeo.triangles[i].v[2]].n[2]
+		};
 
-		temp_vertex1.color = diffuseColor;
-		temp_vertex2.color = diffuseColor;
-		temp_vertex3.color = diffuseColor;
+		temp_vertex1.color = glm::vec3(0.0, 0.0, 0.0);
+		temp_vertex2.color = glm::vec3(0.0, 0.0, 0.0);
+		temp_vertex3.color = glm::vec3(0.0, 0.0, 0.0);
 
 		convertedBoss.vertices.push_back(temp_vertex1);
 		convertedBoss.vertices.push_back(temp_vertex2);
@@ -146,11 +154,12 @@ GeometricObject bossman::MeshToGeometricObject(Mesh meshToGeo) {
 
 std::vector<GeometricObject*> bossman::getGeometry() {
 	std::vector<GeometricObject*> geometry;
+
 	geometry.push_back(&body);
-	geometry.push_back(convertedSimpleMesh128);
-	geometry.push_back(convertedSimpleMesh64);
-	geometry.push_back(convertedSimpleMesh32);
-	geometry.push_back(convertedSimpleMesh16);
+	geometry.push_back(&convertedSimpleMesh128);
+	geometry.push_back(&convertedSimpleMesh64);
+	geometry.push_back(&convertedSimpleMesh32);
+	geometry.push_back(&convertedSimpleMesh16);
 
 	return geometry;
 }

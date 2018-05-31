@@ -87,7 +87,7 @@ Mesh simplifyMesh(unsigned int r, Mesh mesh) {
 					Vec3Di tri;
 					for(int space=0;space<3;space++) {
 						tri[space] = newIndexRemapping.find(boxIndices_temp[space])->second;
-					}
+					}	
 					simplifiedTriangles.push_back(Triangle(tri[0],tri[1],tri[2]));
 				}	
 			}
