@@ -16,7 +16,7 @@ int Grid::Vec3DiToInt(const Vec3Di & pos) {
 }
 
 
-void Grid::putVertices(const std::vector<Vertex> & vertices){
+void Grid::putVertices(const std::vector<Vertex1> & vertices){
 	//iterate over all original vertices	
 	for(auto vertiter: vertices) {
 
@@ -24,9 +24,9 @@ void Grid::putVertices(const std::vector<Vertex> & vertices){
 		
 		if(verticesInCell.find(map_index) == verticesInCell.end()) {// entry not found: lets create it	
 	//		printf("first vertex in this cube. Creating entry...\n");
-			std::vector<Vertex> gridVector;
+			std::vector<Vertex1> gridVector;
 			gridVector.push_back(vertiter);
-			verticesInCell.insert(std::pair< int, std::vector<Vertex> >(map_index,gridVector)); 
+			verticesInCell.insert(std::pair< int, std::vector<Vertex1> >(map_index,gridVector)); 
 		}
 		else {
 	//		printf("not the first one, adding it to the respective vector\n");
@@ -37,7 +37,7 @@ void Grid::putVertices(const std::vector<Vertex> & vertices){
 	}
 }
 
-int Grid::findGridCoord(const Vertex vertiter) {
+int Grid::findGridCoord(const Vertex1 vertiter) {
 		//find out which grid block the current vertex belongs to
 		Vec3Di gridCoord;
 
@@ -65,7 +65,7 @@ void Grid::computeRepresentatives() {
       			avg += i->second[j].p;
 		}
 		avg /= i->second.size();  
-		representatives.insert(std::pair<int,Vertex>(i->first,avg));
+		representatives.insert(std::pair<int,Vertex1>(i->first,avg));
 		avg = avg_ref; //reset the value of avg for the next iteration
 	}
 

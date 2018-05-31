@@ -52,11 +52,11 @@ Mesh simplifyMesh(unsigned int r, Mesh mesh) {
 	grid.computeRepresentatives();	
 
 	//work with a local reference	
-    	const vector<Vertex> & vertices = mesh.vertices;
+    	const vector<Vertex1> & vertices = mesh.vertices;
     	const vector<Triangle> & triangles = mesh.triangles;
 
   std::map<unsigned int, unsigned int > newIndexRemapping;
-  vector<Vertex> simplifiedVertices;
+  vector<Vertex1> simplifiedVertices;
 
     int count = 0;
     for(RepresentativeList::iterator it = grid.representatives.begin() ; it != grid.representatives.end (); it++, count++){

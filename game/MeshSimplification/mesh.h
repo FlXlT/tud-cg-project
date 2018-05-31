@@ -1,7 +1,7 @@
 #ifndef MESH_H
 #define MESH_H
 
-#include "Vertex.h"
+#include "Vertex1.h"
 #include <vector>
 
 /************************************************************
@@ -38,8 +38,8 @@ public:
 class Mesh {
 public:
     Mesh();
-    inline Mesh (const std::vector<Vertex> & v, const std::vector<Triangle> & t) : vertices (v), triangles (t)  {}
-    std::vector<Vertex> vertices;
+    inline Mesh (const std::vector<Vertex1> & v, const std::vector<Triangle> & t) : vertices (v), triangles (t)  {}
+    std::vector<Vertex1> vertices;
     std::vector<Triangle> triangles;
 
     bool loadMesh(const char * filename);
