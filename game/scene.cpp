@@ -83,6 +83,10 @@ void Scene::sceneMouseButtonHandler(int button, int action, float mouseXcoord, f
 			spaceship.shootLaser(mouseProjection, spaceshipProjection);
 			generateLaserBufferObjects(); 
 			lastTimeShot = std::time(nullptr);
+			if (hitcount < 4) {
+				// simplified = simplifyMesh(128/pow(2,hitcount), mesh);
+				hitcount++;
+			}
 		}
 	}
 }

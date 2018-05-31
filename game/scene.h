@@ -10,8 +10,10 @@
 #include "enemycontroller.h"
 
 class Scene {
-	bool      leftMousePressed = false;
+	bool		leftMousePressed = false;
 	bool		before = false;
+	int			hitcount;
+
 	std::time_t lastTimeShot = std::time(0);
 	
 public:
